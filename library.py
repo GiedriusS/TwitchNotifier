@@ -80,7 +80,7 @@ class notify_api(object):
         try:
             json = r.json()
         except ValueError:
-            print('[ERROR] Failed to parse json in getFollowedChannels. '
+            print('[ERROR] Failed to parse json in checkIfOnline. '
                   'A empty json object was created')
             json = {}
 
