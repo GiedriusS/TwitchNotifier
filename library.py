@@ -132,7 +132,7 @@ class notify_api(object):
                 try:
                     self.showNotification(a[i][0], "went offline")
                 except RuntimeError:
-                    print('[ERROR] Faield to show notification!\n'
+                    print('[ERROR] Failed to show notification!\n'
                           '' + a[i][0] + ' went offline')
 
             i = i + 1

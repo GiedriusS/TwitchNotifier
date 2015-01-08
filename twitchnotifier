@@ -19,7 +19,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     if not args.token:
         print('No token passed! The app could run slower due to twitch '
-              'rate limit API requests!\n'
+              'rate limiting API requests!\n'
               'Go to http://www.twitchapps.com/tmi/ to generate a token!')
 
     api = library.notify_api(args.nick, args.token)
