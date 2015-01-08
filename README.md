@@ -1,5 +1,8 @@
 # TwitchNotifier
-A simple python application that sits in the background and notifies you when some channel you follow comes up online or goes offline
+A simple python application that sits in the background and notifies you when some channel you follow comes up online or goes offline.
+
+Optionally it can only check for offline/online channels once and exit using options -n/--online or -f/--offline.
+
 Uses twitch v2 api.
 
 # Requirements
