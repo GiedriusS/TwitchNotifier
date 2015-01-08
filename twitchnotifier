@@ -1,0 +1,49 @@
+#!/usr/bin/python
+import library
+import argparse
+import time
+import sys
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('nick', help='Twitch nickname')
+    parser.add_argument('-t', '--token', help='Twitch OAUTH token. '
+                        'Highly recommended to avoid rate limits', default='')
+    parser.add_argument('-i', '--interval', help='Interval between checks '
+                        'in seconds. Default: 300', type=int, default=300)
+    parser.add_argument('-n', '--online', help='Only check for online channels '
+                        'a user follows', action="store_true")
+    parser.add_argument('-f', '--offline', help='Only check for offline channels '
+                        'a user follows', action="store_true")
+    args = parser.parse_args()
+    if not args.token:
+        print('No token passed! The app could run slower due to twitch '
+              'rate limit API requests!\n'
+              'Go to http://www.twitchapps.com/tmi/ to generate a token!')
+
+    api = library.notify_api(args.nick, args.token)
+    new = api.getStatus()
+    if args.online:
+        for chan in new:
+            if chan[1]:
+                print(chan[0])
+        del(api)
+        sys.exit()
+
+    if args.offline:
+        for chan in new:
+            if not chan[1]:
+                print(chan[0])
+        del(api)
+        sys.exit()
+
+    old = None
+
+    while True:
+        if old and new:
+            api.diff(new, old)
+
+        time.sleep(args.interval)
+        old = new
+        new = api.getStatus()
