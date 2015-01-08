@@ -48,10 +48,16 @@ class notify_api(object):
         url = self.base_url + '/users/' + self.nick + '/follows/channels'
         r = requests.get(url, headers=self.headers, params=payload)
 
-        if ('status' in r.json() and r.json()['status'] == 404):
+        try:
+            json = r.json()
+        except ValueError:
+            print('[ERROR] Failed to parse json in getFollowedChannels. '
+                  'A empty json object was created')
+            json = {}
+
+        if ('status' in json and json['status'] == 404):
             raise NameError(self.nick + ' is a invalid nickname!')
 
-        json = r.json()
         ret = []
         for chan in json['follows']:
             ret.append(chan['channel']['name'])
@@ -71,7 +77,14 @@ class notify_api(object):
         '''
         url = self.base_url + '/streams/' + chan
         r = requests.get(url, headers=self.headers)
-        if 'stream' in r.json() and r.json()['stream'] is None:
+        try:
+            json = r.json()
+        except ValueError:
+            print('[ERROR] Failed to parse json in getFollowedChannels. '
+                  'A empty json object was created')
+            json = {}
+
+        if 'stream' in json and json['stream'] is None:
             return False
         else:
             return True
