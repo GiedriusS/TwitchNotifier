@@ -19,6 +19,7 @@ class notify_api(object):
         Positional arguments:
         nick - nickname of the user
         token - a special OAUTH token generated from Twitch
+        verbose - if we should be verbose in output
         '''
         if not nick.strip():
             raise ValueError('Nick passed to notify_api '
