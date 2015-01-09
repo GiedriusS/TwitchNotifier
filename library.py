@@ -10,8 +10,9 @@ class notify_api(object):
     token = ''
     base_url = 'https://api.twitch.tv/kraken/'
     headers = {}
+    verbose = False
 
-    def __init__(self, nick, token=''):
+    def __init__(self, nick, token='', verbose=False):
         '''
         Initialize the object with a nick and a optional token
 
@@ -29,6 +30,7 @@ class notify_api(object):
         self.token = token
         self.headers = {'Accept': 'application/vnd.twitch.v2+json',
                         'Client-ID': self.token}
+        self.verbose = verbose
 
         if not Notify.init('TwitchNotifier'):
             raise RuntimeError('Failed to init libnotify')
@@ -54,6 +56,9 @@ class notify_api(object):
             print('[ERROR] Failed to parse json in getFollowedChannels. '
                   'A empty json object was created')
             json = {}
+            if self.verbose:
+                print('r.text: ' + r.text, 'r. statuscode: ' + r.statuscode,
+                      'r.headers: ' + r.headers)
 
         if ('status' in json and json['status'] == 404):
             raise NameError(self.nick + ' is a invalid nickname!')
@@ -83,6 +88,9 @@ class notify_api(object):
             print('[ERROR] Failed to parse json in checkIfOnline. '
                   'A empty json object was created')
             json = {}
+            if self.verbose:
+                print('r.text: ' + r.text, 'r. statuscode: ' + r.statuscode,
+                      'r.headers: ' + r.headers)
 
         if 'stream' in json and json['stream'] is None:
             return False
