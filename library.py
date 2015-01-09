@@ -156,15 +156,15 @@ class NotifyApi(object):
         old - older list returned from get_status()
         '''
         i = 0
-        while i < len(new) - 1:
-            if new[i][1] and not old[i][1]:
+        while (i < len(new) - 1) and (i < len(old) - 1):
+            if new[i][0] == old[i][0] and new[i][1] and not old[i][1]:
                 try:
                     self.show_notification(new[i][0], "came online")
                 except RuntimeError:
                     print('[ERROR] Failed to show notification!\n'
                           '' + new[i][0] + ' came online')
 
-            elif not new[i][1] and old[i][1]:
+            elif new[i][0] == old[i][0] and not new[i][1] and old[i][1]:
                 try:
                     self.show_notification(new[i][0], "went offline")
                 except RuntimeError:
