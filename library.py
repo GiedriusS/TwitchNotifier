@@ -58,8 +58,8 @@ class notify_api(object):
                   'A empty json object was created')
             json = {}
             if self.verbose:
-                print('r.text: ' + r.text, '\nr. status_code: ' + str(r.status_code),
-                      '\nr.headers: ' + str(r.headers))
+                print('r.text: ' + r.text, '\nr. status_code: ' +
+                      str(r.status_code), '\nr.headers: ' + str(r.headers))
 
         if ('status' in json and json['status'] == 404):
             raise NameError(self.nick + ' is a invalid nickname!')
@@ -91,8 +91,8 @@ class notify_api(object):
                   'A empty json object was created')
             json = {}
             if self.verbose:
-                print('r.text: ' + r.text, '\nr. status_code: ' + str(r.status_code),
-                      '\nr.headers: ' + str(r.headers))
+                print('r.text: ' + r.text, '\nr. status_code: ' +
+                      str(r.status_code), '\nr.headers: ' + str(r.headers))
 
         if 'stream' in json and json['stream'] is None:
             return False
