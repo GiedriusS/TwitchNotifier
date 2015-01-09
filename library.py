@@ -64,8 +64,9 @@ class notify_api(object):
             raise NameError(self.nick + ' is a invalid nickname!')
 
         ret = []
-        for chan in json['follows']:
-            ret.append(chan['channel']['name'])
+        if 'follows' in json:
+            for chan in json['follows']:
+                ret.append(chan['channel']['name'])
 
         return ret
 
