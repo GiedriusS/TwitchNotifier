@@ -49,7 +49,15 @@ class notify_api(object):
         Returns a response object that contains all information
         '''
         url = self.base_url + '/users/' + self.nick + '/follows/channels'
-        r = requests.get(url, headers=self.headers, params=payload)
+
+        try:
+            r = requests.get(url, headers=self.headers, params=payload)
+        except Exception as e:
+            print('[ERROR] Exception in getFollowedChannels::requests.get().',
+                  '\n[ERROR] __doc__ = ' + e.__doc__,
+                  '\n[ERROR] __str__ = ' + e.__str__,
+                  '\n[ERROR] __traceback__ ' + e.__traceback__)
+            return []
 
         try:
             json = r.json()
@@ -83,7 +91,16 @@ class notify_api(object):
         chan - channel name
         '''
         url = self.base_url + '/streams/' + chan
-        r = requests.get(url, headers=self.headers)
+
+        try:
+            r = requests.get(url, headers=self.headers)
+        except Exception as e:
+            print('[ERROR] Exception in checkIfOnline::requests.get().',
+                  '\n[ERROR] __doc__ = ' + e.__doc__,
+                  '\n[ERROR] __str__ = ' + e.__str__,
+                  '\n[ERROR] __traceback__ ' + e.__traceback__)
+            return False
+
         try:
             json = r.json()
         except ValueError:
