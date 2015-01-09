@@ -132,7 +132,7 @@ class NotifyApi(object):
         if not n.show():
             raise RuntimeError('Failed to show a notification')
 
-    def getStatus(self):
+    def get_status(self):
         '''
         Get a list of tuples in format of (name, true/false)
         1 = channel is online, 0 = channel is offline
@@ -153,11 +153,11 @@ class NotifyApi(object):
 
     def diff(self, new, old):
         '''
-        Computes diff between two lists returned from getStatus() and notifies
+        Computes diff between two lists returned from get_status() and notifies
 
         Positional arguments:
-        new - newer list returned from getStatus()
-        old - older list returned from getStatus()
+        new - newer list returned from get_status()
+        old - older list returned from get_status()
         '''
         i = 0
         while i < len(new) - 1:
@@ -181,6 +181,6 @@ if __name__ == '__main__':
     core = notify_api('Xangold')
     list_of_chans = core.get_followed_channels()
     print(list_of_chans, len(list_of_chans))
-    stat = core.getStatus()
+    stat = core.get_status()
     print(core.check_if_online('nadeshot'))
     print(stat)
