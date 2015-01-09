@@ -116,7 +116,7 @@ class NotifyApi(object):
         else:
             return True
 
-    def showNotification(self, title, message):
+    def show_notification(self, title, message):
         '''
         Show a notification using libnotify/gobject
 
@@ -163,14 +163,14 @@ class NotifyApi(object):
         while i < len(new) - 1:
             if new[i][1] and not old[i][1]:
                 try:
-                    self.showNotification(new[i][0], "came online")
+                    self.show_notification(new[i][0], "came online")
                 except RuntimeError:
                     print('[ERROR] Failed to show notification!\n'
                           '' + new[i][0] + ' came online')
 
             elif not new[i][1] and old[i][1]:
                 try:
-                    self.showNotification(new[i][0], "went offline")
+                    self.show_notification(new[i][0], "went offline")
                 except RuntimeError:
                     print('[ERROR] Failed to show notification!\n'
                           '' + new[i][0] + ' went offline')
