@@ -21,3 +21,4 @@ Uses twitch v2 api.
 | -i/--interval  | Interval between checks         |
 | -n/--online    | Only check for online channels  |
 | -f/--offline   | Only check for offline channels |
+| -v/--verbose   | Enable verbose output           |
