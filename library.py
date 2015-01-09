@@ -83,7 +83,7 @@ class NotifyApi(object):
         '''Uninit libnotify object'''
         Notify.uninit()
 
-    def checkIfOnline(self, chan):
+    def check_if_online(self, chan):
         '''
         Gets a stream object and sees if it's online
 
@@ -95,7 +95,7 @@ class NotifyApi(object):
         try:
             r = requests.get(url, headers=self.headers)
         except Exception as e:
-            print('[ERROR] Exception in checkIfOnline::requests.get().',
+            print('[ERROR] Exception in check_if_online::requests.get().',
                   '\n[ERROR] __doc__ = ' + e.__doc__,
                   '\n[ERROR] __str__ = ' + e.__str__,
                   '\n[ERROR] __traceback__ ' + e.__traceback__)
@@ -104,7 +104,7 @@ class NotifyApi(object):
         try:
             json = r.json()
         except ValueError:
-            print('[ERROR] Failed to parse json in checkIfOnline. '
+            print('[ERROR] Failed to parse json in check_if_online. '
                   'A empty json object was created')
             json = {}
             if self.verbose:
@@ -142,7 +142,7 @@ class NotifyApi(object):
         while True:
             chans = self.get_followed_channels({'offset': offset})
             for chan in chans:
-                pair = (chan, self.checkIfOnline(chan))
+                pair = (chan, self.check_if_online(chan))
                 ret.append(pair)
 
             if len(chans) == 0:
@@ -182,5 +182,5 @@ if __name__ == '__main__':
     list_of_chans = core.get_followed_channels()
     print(list_of_chans, len(list_of_chans))
     stat = core.getStatus()
-    print(core.checkIfOnline('nadeshot'))
+    print(core.check_if_online('nadeshot'))
     print(stat)
