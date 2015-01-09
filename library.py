@@ -22,10 +22,10 @@ class NotifyApi(object):
         verbose - if we should be verbose in output
         '''
         if not nick.strip():
-            raise ValueError('Nick passed to notify_api '
+            raise ValueError('Nick passed to NotifyApi '
                              'is not a string!')
         if not isinstance(nick, str) or not isinstance(token, str):
-            raise TypeError('Invalid variable passed to notify_api')
+            raise TypeError('Invalid variable passed to NotifyApi')
 
         self.nick = nick
         self.token = token
@@ -174,7 +174,7 @@ class NotifyApi(object):
             i = i + 1
 
 if __name__ == '__main__':
-    core = notify_api('Xangold')
+    core = NotifyApi('Xangold')
     list_of_chans = core.get_followed_channels()
     print(list_of_chans, len(list_of_chans))
     stat = core.get_status()
