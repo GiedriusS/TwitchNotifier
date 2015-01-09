@@ -2,7 +2,7 @@ import requests
 from gi.repository import Notify
 
 
-class notify_api(object):
+class NotifyApi(object):
     '''
     Represents all twitch and libnotify/gobject calls the program needs
     '''

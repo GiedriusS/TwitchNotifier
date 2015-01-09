@@ -24,7 +24,7 @@ if __name__ == '__main__':
               'rate limiting API requests!\n'
               'Go to http://www.twitchapps.com/tmi/ to generate a token!')
 
-    api = library.notify_api(args.nick, args.token, args.verbose)
+    api = library.NotifyApi(args.nick, args.token, args.verbose)
     new = api.getStatus()
     if args.online:
         for chan in new:
