@@ -54,9 +54,7 @@ class NotifyApi(object):
             r = requests.get(url, headers=self.headers, params=payload)
         except Exception as e:
             print('[ERROR] Exception in get_followed_channels::requests.get().',
-                  '\n[ERROR] __doc__ = ' + str(e.__doc__),
-                  '\n[ERROR] __str__ = ' + str(e.__str__),
-                  '\n[ERROR] __traceback__ ' + str(e.__traceback__))
+                  '\n[ERROR] __doc__ = ' + str(e.__doc__))
             return []
 
         try:
@@ -96,9 +94,7 @@ class NotifyApi(object):
             r = requests.get(url, headers=self.headers)
         except Exception as e:
             print('[ERROR] Exception in check_if_online::requests.get().',
-                  '\n[ERROR] __doc__ = ' + str(e.__doc__),
-                  '\n[ERROR] __str__ = ' + str(e.__str__),
-                  '\n[ERROR] __traceback__ ' + str(e.__traceback__))
+                  '\n[ERROR] __doc__ = ' + str(e.__doc__))
             return False
 
         try:
