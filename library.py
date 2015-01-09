@@ -151,29 +151,29 @@ class notify_api(object):
             offset = offset + 25
         return ret
 
-    def diff(self, a, b):
+    def diff(self, new, old):
         '''
         Computes diff between two lists returned from getStatus() and notifies
 
         Positional arguments:
-        a - newer list returned from getStatus()
-        b - older list returned from getStatus()
+        new - newer list returned from getStatus()
+        old - older list returned from getStatus()
         '''
         i = 0
-        while i < len(a) - 1:
-            if a[i][1] and not b[i][1]:
+        while i < len(new) - 1:
+            if new[i][1] and not old[i][1]:
                 try:
-                    self.showNotification(a[i][0], "came online")
+                    self.showNotification(new[i][0], "came online")
                 except RuntimeError:
                     print('[ERROR] Failed to show notification!\n'
-                          '' + a[i][0] + ' came online')
+                          '' + new[i][0] + ' came online')
 
-            elif not a[i][1] and b[i][1]:
+            elif not new[i][1] and old[i][1]:
                 try:
-                    self.showNotification(a[i][0], "went offline")
+                    self.showNotification(new[i][0], "went offline")
                 except RuntimeError:
                     print('[ERROR] Failed to show notification!\n'
-                          '' + a[i][0] + ' went offline')
+                          '' + new[i][0] + ' went offline')
 
             i = i + 1
 
