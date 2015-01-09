@@ -36,7 +36,7 @@ class NotifyApi(object):
         if not Notify.init('TwitchNotifier'):
             raise RuntimeError('Failed to init libnotify')
 
-    def getFollowedChannels(self, payload={}):
+    def get_followed_channels(self, payload={}):
         '''
         Get a list of channels the user is following
 
@@ -53,7 +53,7 @@ class NotifyApi(object):
         try:
             r = requests.get(url, headers=self.headers, params=payload)
         except Exception as e:
-            print('[ERROR] Exception in getFollowedChannels::requests.get().',
+            print('[ERROR] Exception in get_followed_channels::requests.get().',
                   '\n[ERROR] __doc__ = ' + e.__doc__,
                   '\n[ERROR] __str__ = ' + e.__str__,
                   '\n[ERROR] __traceback__ ' + e.__traceback__)
@@ -62,7 +62,7 @@ class NotifyApi(object):
         try:
             json = r.json()
         except ValueError:
-            print('[ERROR] Failed to parse json in getFollowedChannels. '
+            print('[ERROR] Failed to parse json in get_followed_channels. '
                   'A empty json object was created')
             json = {}
             if self.verbose:
@@ -140,7 +140,7 @@ class NotifyApi(object):
         ret = []
         offset = 0
         while True:
-            chans = self.getFollowedChannels({'offset': offset})
+            chans = self.get_followed_channels({'offset': offset})
             for chan in chans:
                 pair = (chan, self.checkIfOnline(chan))
                 ret.append(pair)
@@ -179,7 +179,7 @@ class NotifyApi(object):
 
 if __name__ == '__main__':
     core = notify_api('Xangold')
-    list_of_chans = core.getFollowedChannels()
+    list_of_chans = core.get_followed_channels()
     print(list_of_chans, len(list_of_chans))
     stat = core.getStatus()
     print(core.checkIfOnline('nadeshot'))
