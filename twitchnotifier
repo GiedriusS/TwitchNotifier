@@ -35,7 +35,7 @@ if __name__ == '__main__':
 
     if args.offline:
         for chan in new:
-            if not chan[1]:
+            if not chan[1] is None and not chan[1]:
                 print(chan[0])
         del(api)
         sys.exit()
