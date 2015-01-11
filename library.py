@@ -100,12 +100,11 @@ class NotifyApi(object):
         try:
             json = r.json()
         except ValueError:
-            print('[ERROR] Failed to parse json in check_if_online. '
-                  'A empty json object was created')
-            json = {}
+            print('[ERROR] Failed to parse json in check_if_online. ')
             if self.verbose:
                 print('r.text: ' + r.text, '\nr. status_code: ' +
                       str(r.status_code), '\nr.headers: ' + str(r.headers))
+            return None
 
         if 'stream' in json and json['stream'] is None:
             return False
@@ -130,7 +129,7 @@ class NotifyApi(object):
 
     def get_status(self):
         '''
-        Get a list of tuples in format of (name, true/false)
+        Get a list of tuples in format of (name, true/false/none)
         1 = channel is online, 0 = channel is offline
         '''
         ret = []
@@ -157,14 +156,20 @@ class NotifyApi(object):
         '''
         i = 0
         while (i < len(new) - 1) and (i < len(old) - 1):
-            if new[i][0] == old[i][0] and new[i][1] and not old[i][1]:
+            if (
+                    not new[i][1] is None and not old[i][1] is None and
+                    new[i][0] == old[i][0] and new[i][1] and not old[i][1]
+               ):
                 try:
                     self.show_notification(new[i][0], "came online")
                 except RuntimeError:
                     print('[ERROR] Failed to show notification!\n'
                           '' + new[i][0] + ' came online')
 
-            elif new[i][0] == old[i][0] and not new[i][1] and old[i][1]:
+            elif (
+                    not new[i][1] is None and not old[i][1] is None and
+                    new[i][0] == old[i][0] and not new[i][1] and old[i][1]
+                 ):
                 try:
                     self.show_notification(new[i][0], "went offline")
                 except RuntimeError:
