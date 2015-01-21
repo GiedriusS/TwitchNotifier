@@ -22,10 +22,9 @@ class NotifyApi(object):
         verbose - if we should be verbose in output
         '''
         if not nick.strip():
-            raise ValueError('Nick passed to NotifyApi '
-                             'is not a string!')
+            raise ValueError('nick passed to __init__ is empty')
         if not isinstance(nick, str) or not isinstance(token, str):
-            raise TypeError('Invalid variable passed to NotifyApi')
+            raise TypeError('Invalid variable type passed to NotifyApi')
 
         self.nick = nick
         self.token = token
