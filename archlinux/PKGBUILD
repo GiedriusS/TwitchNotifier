@@ -1,6 +1,6 @@
 # Maintainer: Giedrius Statkevičius <giedrius.statkevicius@gmail.com>
 
-pkgname=twitchnotifier
+pkgname=twitchnotifier-git
 pkgver=20140121
 pkgrel=2
 pkgdesc="A tool that sits in the background and notifies you using libnotify if a channel you follow comes online or goes offline"
