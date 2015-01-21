@@ -94,7 +94,7 @@ class NotifyApi(object):
         except Exception as e:
             print('[ERROR] Exception in check_if_online::requests.get()',
                   '\n[ERROR] __doc__ = ' + str(e.__doc__))
-            return False
+            return None
 
         try:
             json = r.json()
