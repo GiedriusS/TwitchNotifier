@@ -45,7 +45,7 @@ class NotifyApi(object):
         Raises:
         NameError - when the current nickname is invalid
 
-        Returns a response object that contains all information
+        Returns a list of channels that user follows
         '''
         url = self.base_url + '/users/' + self.nick + '/follows/channels'
 
@@ -86,6 +86,8 @@ class NotifyApi(object):
 
         Positional arguments:
         chan - channel name
+
+        Returns True/False if channel is off/of, None if error occurs
         '''
         url = self.base_url + '/streams/' + chan
 
@@ -128,8 +130,8 @@ class NotifyApi(object):
 
     def get_status(self):
         '''
-        Get a list of tuples in format of (name, true/false/none)
-        1 = channel is online, 0 = channel is offline
+        Get a list of tuples in format of (name, True/False/None)
+        True = channel is online, False = channel is offline, None = error
         '''
         ret = []
         offset = 0
