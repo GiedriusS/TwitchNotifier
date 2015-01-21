@@ -1,8 +1,8 @@
 # Maintainer: Giedrius Statkevičius <giedrius.statkevicius@gmail.com>
 
-pkgname=TwitchNotifier
+pkgname=twitchnotifier
 pkgver=20140121
-pkgrel=1
+pkgrel=2
 pkgdesc="A tool that sits in the background and notifies you using libnotify if a channel you follow comes online or goes offline"
 arch=('any')
 url="https://github.com/GiedriusS/TwitchNotifier"
@@ -13,6 +13,6 @@ source=(git://github.com/GiedriusS/TwitchNotifier.git)
 md5sums=('SKIP')
 
 package() {
-  cd "$srcdir/$pkgname"
+  cd "$srcdir/TwitchNotifier"
   python setup.py install --root="$pkgdir"
 }
