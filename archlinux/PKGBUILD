@@ -13,8 +13,6 @@ source=(git://github.com/GiedriusS/TwitchNotifier.git)
 md5sums=('SKIP')
 
 package() {
-  ls
-  ls "$srcdir"
   cd "$srcdir/$pkgname"
   python setup.py install --root="$pkgdir"
 }
