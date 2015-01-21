@@ -155,26 +155,20 @@ class NotifyApi(object):
         '''
         i = 0
         while (i < len(new) - 1) and (i < len(old) - 1):
-            if (
-                    not new[i][1] is None and not old[i][1] is None and
-                    new[i][0] == old[i][0] and new[i][1] and not old[i][1]
-               ):
-                try:
-                    self.show_notification(new[i][0], "came online")
-                except RuntimeError:
-                    print('[ERROR] Failed to show notification!\n'
-                          '' + new[i][0] + ' came online')
+            if not new[i][1] is None and not old[i][1] is None:
+                if new[i][0] == old[i][0] and new[i][1] and not old[i][1]:
+                    try:
+                        self.show_notification(new[i][0], "came online")
+                    except RuntimeError:
+                        print('[ERROR] Failed to show notification!\n'
+                              '' + new[i][0] + ' came online')
 
-            elif (
-                    not new[i][1] is None and not old[i][1] is None and
-                    new[i][0] == old[i][0] and not new[i][1] and old[i][1]
-                 ):
-                try:
-                    self.show_notification(new[i][0], "went offline")
-                except RuntimeError:
-                    print('[ERROR] Failed to show notification!\n'
-                          '' + new[i][0] + ' went offline')
-
+                if new[i][0] == old[i][0] and not new[i][1] and old[i][1]:
+                    try:
+                        self.show_notification(new[i][0], "went offline")
+                    except RuntimeError:
+                        print('[ERROR] Failed to show notification!\n'
+                              '' + new[i][0] + ' went offline')
             i = i + 1
 
 if __name__ == '__main__':
