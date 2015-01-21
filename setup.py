@@ -2,7 +2,8 @@ from distutils.core import setup
 
 setup(name='TwitchNotifier',
       version='0.1',
-      description='A tool that sits in the background and notifies you using libnotify if a channel you follow comes online or goes offline',
+      description='Daemon that notifies you using libnotify if followed chan '
+                  'goes off/on. Optionally only does this once.',
       author='Giedrius Statkevičius',
       author_email='giedrius.statkevicius@gmail.com',
       url='https://github.com/GiedriusS/TwitchNotifier',
