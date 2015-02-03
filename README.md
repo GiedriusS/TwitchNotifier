@@ -23,3 +23,4 @@ Uses twitch v2 api.
 | -f/--offline   | Only check for offline channels |
 | -v/--verbose   | Enable verbose output           |
 | -u/--user      | Check status of user            |
+| -c/--nick      | Watch NICK followed channels    |
