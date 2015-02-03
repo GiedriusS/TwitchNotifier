@@ -34,6 +34,14 @@ class NotifyApi(object):
             raise RuntimeError('Failed to init libnotify')
 
     def build_headers(token):
+        '''
+        Generate headers used for requests
+
+        Positional arguments:
+        token - a token used for requests
+
+        Returns a dictionary that are passed to requests as headers
+        '''
         return {'Accept': 'application/vnd.twitch.v2+json',
                 'Client-ID': token}
 

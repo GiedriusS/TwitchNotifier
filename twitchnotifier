@@ -21,6 +21,11 @@ if __name__ == '__main__':
     parser.add_argument('-u', '--user', help='Check status of only one user',
                         type=str)
     args = parser.parse_args()
+    if not args.nick and not args.user:
+        print('You have to pass atleast either -c/--nick or '
+              '-u/--user to TwitchNotifier!')
+        sys.exit()
+
     if not args.token and args.verbose:
         print('No token passed! The app could run slower due to twitch '
               'rate limiting API requests!\n'
