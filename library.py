@@ -118,7 +118,7 @@ class NotifyApi(object):
                       str(r.status_code), '\nr.headers: ' + str(r.headers))
             return None
 
-        if 'stream' in json and json['stream'] is None:
+        if ('stream' in json and json['stream'] is None) or 'error' in json:
             return False
         else:
             return True
