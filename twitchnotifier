@@ -7,7 +7,7 @@ import sys
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('nick', help='Twitch nickname')
+    parser.add_argument('-c', '--nick', help='Twitch nickname', default='')
     parser.add_argument('-t', '--token', help='Twitch OAUTH token. '
                         'Highly recommended to avoid rate limits', default='')
     parser.add_argument('-i', '--interval', help='Interval between checks '
@@ -26,19 +26,19 @@ if __name__ == '__main__':
               'rate limiting API requests!\n'
               'Go to http://www.twitchapps.com/tmi/ to generate a token!')
 
-    api = library.NotifyApi(args.nick, args.token, args.verbose)
     if args.user:
-        status = api.check_if_online(args.user)
+        status = library.NotifyApi.check_if_online(args.user, args.verbose, library.NotifyApi.build_headers(args.token))
         if status is None:
             print('Error getting information about', args.user)
         elif status is True:
             print(args.user, 'is online')
         else:
             print(args.user, 'is offline')
-        del(api)
         sys.exit()
 
+    api = library.NotifyApi(args.nick, args.token, args.verbose)
     new = api.get_status()
+
     if args.online:
         for chan in new:
             if chan[1]:

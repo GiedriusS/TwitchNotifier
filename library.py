@@ -1,6 +1,8 @@
 import requests
 from gi.repository import Notify
 
+base_url = 'https://api.twitch.tv/kraken/'
+
 
 class NotifyApi(object):
     '''
@@ -8,8 +10,6 @@ class NotifyApi(object):
     '''
     nick = ''
     token = ''
-    base_url = 'https://api.twitch.tv/kraken/'
-    headers = {}
     verbose = False
 
     def __init__(self, nick, token='', verbose=False):
@@ -28,12 +28,14 @@ class NotifyApi(object):
 
         self.nick = nick
         self.token = token
-        self.headers = {'Accept': 'application/vnd.twitch.v2+json',
-                        'Client-ID': self.token}
         self.verbose = verbose
 
         if not Notify.init('TwitchNotifier'):
             raise RuntimeError('Failed to init libnotify')
+
+    def build_headers(token):
+        return {'Accept': 'application/vnd.twitch.v2+json',
+                'Client-ID': token}
 
     def get_followed_channels(self, payload={}):
         '''
@@ -47,10 +49,11 @@ class NotifyApi(object):
 
         Returns a list of channels that user follows
         '''
-        url = self.base_url + '/users/' + self.nick + '/follows/channels'
+        url = base_url + '/users/' + self.nick + '/follows/channels'
 
         try:
-            r = requests.get(url, headers=self.headers, params=payload)
+            r = requests.get(url, headers=NotifyApi.build_headers(self.token),
+                             params=payload)
         except Exception as e:
             print('[ERROR] Exception in get_followed_channels::requests.get()',
                   '\n[ERROR] __doc__ = ' + str(e.__doc__))
@@ -80,7 +83,7 @@ class NotifyApi(object):
         '''Uninit libnotify object'''
         Notify.uninit()
 
-    def check_if_online(self, chan):
+    def check_if_online(chan, verb=False, head=''):
         '''
         Gets a stream object and sees if it's online
 
@@ -89,10 +92,10 @@ class NotifyApi(object):
 
         Returns True/False if channel is off/of, None if error occurs
         '''
-        url = self.base_url + '/streams/' + chan
+        url = base_url + '/streams/' + chan
 
         try:
-            r = requests.get(url, headers=self.headers)
+            r = requests.get(url, headers=head)
         except Exception as e:
             print('[ERROR] Exception in check_if_online::requests.get()',
                   '\n[ERROR] __doc__ = ' + str(e.__doc__))
@@ -102,7 +105,7 @@ class NotifyApi(object):
             json = r.json()
         except ValueError:
             print('[ERROR] Failed to parse json in check_if_online. ')
-            if self.verbose:
+            if verb:
                 print('r.text: ' + r.text, '\nr. status_code: ' +
                       str(r.status_code), '\nr.headers: ' + str(r.headers))
             return None
@@ -138,7 +141,8 @@ class NotifyApi(object):
         while True:
             chans = self.get_followed_channels({'offset': offset})
             for chan in chans:
-                pair = (chan, self.check_if_online(chan))
+                pair = (chan, NotifyApi.check_if_online(chan, self.verbose,
+                        NotifyApi.build_headers(self.token)))
                 ret.append(pair)
 
             if len(chans) == 0:
@@ -178,5 +182,5 @@ if __name__ == '__main__':
     list_of_chans = core.get_followed_channels()
     print(list_of_chans, len(list_of_chans))
     stat = core.get_status()
-    print(core.check_if_online('nadeshot'))
+    print(NotifyApi.check_if_online('nadeshot'))
     print(stat)
