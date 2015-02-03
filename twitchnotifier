@@ -21,7 +21,7 @@ if __name__ == '__main__':
     parser.add_argument('-u', '--user', help='Check status of only one user',
                         type=str)
     args = parser.parse_args()
-    if not args.token:
+    if not args.token and args.verbose:
         print('No token passed! The app could run slower due to twitch '
               'rate limiting API requests!\n'
               'Go to http://www.twitchapps.com/tmi/ to generate a token!')
