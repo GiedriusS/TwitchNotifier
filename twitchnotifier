@@ -18,6 +18,8 @@ if __name__ == '__main__':
                         'a user follows', action='store_true')
     parser.add_argument('-v', '--verbose', help='Enable verbose output',
                         action='store_true')
+    parser.add_argument('-u', '--user', help='Check status of only one user',
+                        type=str)
     args = parser.parse_args()
     if not args.token:
         print('No token passed! The app could run slower due to twitch '
@@ -25,6 +27,17 @@ if __name__ == '__main__':
               'Go to http://www.twitchapps.com/tmi/ to generate a token!')
 
     api = library.NotifyApi(args.nick, args.token, args.verbose)
+    if args.user:
+        status = api.check_if_online(args.user)
+        if status is None:
+            print('Error getting information about', args.user)
+        elif status is True:
+            print(args.user, 'is online')
+        else:
+            print(args.user, 'is offline')
+        del(api)
+        sys.exit()
+
     new = api.get_status()
     if args.online:
         for chan in new:

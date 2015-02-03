@@ -22,3 +22,4 @@ Uses twitch v2 api.
 | -n/--online    | Only check for online channels  |
 | -f/--offline   | Only check for offline channels |
 | -v/--verbose   | Enable verbose output           |
+| -u/--user      | Check status of user            |
