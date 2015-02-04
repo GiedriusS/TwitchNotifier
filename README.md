@@ -25,7 +25,6 @@ Uses twitch v2 api.
 | Option         | Explanation                     |
 | -------------- | ------------------------------- |
 | -h/--help      | Print help message              |
-| -t/--token     | OAUTH token                     |
 | -i/--interval  | Interval between checks         |
 | -n/--online    | Only check for online channels  |
 | -f/--offline   | Only check for offline channels |

@@ -16,11 +16,10 @@ class NotifyApi(object):
 
     def __init__(self, nick, verbose=False):
         '''
-        Initialize the object with a nick and a optional token
+        Initialize the object with a nick and verbose option
 
         Positional arguments:
         nick - nickname of the user
-        token - a special OAUTH token generated from Twitch
         verbose - if we should be verbose in output
         '''
         if not nick.strip():
