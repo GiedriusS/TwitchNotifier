@@ -2,6 +2,9 @@ import requests
 from gi.repository import Notify
 
 base_url = 'https://api.twitch.tv/kraken/'
+client_id = 'pvv7ytxj4v7i10h0p3s7ewf4vpoz5fc'
+head = {'Accept': 'application/vnd.twitch.v2+json',
+        'Client-ID': client_id}
 
 
 class NotifyApi(object):
@@ -9,10 +12,9 @@ class NotifyApi(object):
     Represents all twitch and libnotify/gobject calls the program needs
     '''
     nick = ''
-    token = ''
     verbose = False
 
-    def __init__(self, nick, token='', verbose=False):
+    def __init__(self, nick, verbose=False):
         '''
         Initialize the object with a nick and a optional token
 
@@ -25,29 +27,15 @@ class NotifyApi(object):
             raise ValueError('nick passed to __init__ is empty')
         if (
                 not isinstance(nick, str) or
-                not isinstance(token, str) or
                 not isinstance(verbose, bool)
                 ):
             raise TypeError('Invalid variable type passed to NotifyApi')
 
         self.nick = nick
-        self.token = token
         self.verbose = verbose
 
         if not Notify.init('TwitchNotifier'):
             raise RuntimeError('Failed to init libnotify')
-
-    def build_headers(token):
-        '''
-        Generate headers used for requests
-
-        Positional arguments:
-        token - a token used for requests
-
-        Returns a dictionary that are passed to requests as headers
-        '''
-        return {'Accept': 'application/vnd.twitch.v2+json',
-                'Client-ID': token}
 
     def get_followed_channels(self, payload={}):
         '''
@@ -64,8 +52,7 @@ class NotifyApi(object):
         url = base_url + '/users/' + self.nick + '/follows/channels'
 
         try:
-            r = requests.get(url, headers=NotifyApi.build_headers(self.token),
-                             params=payload)
+            r = requests.get(url, headers=head, params=payload)
         except Exception as e:
             print('[ERROR] Exception in get_followed_channels::requests.get()',
                   '\n[ERROR] __doc__ = ' + str(e.__doc__))
@@ -95,7 +82,7 @@ class NotifyApi(object):
         '''Uninit libnotify object'''
         Notify.uninit()
 
-    def check_if_online(chan, verb=False, head=''):
+    def check_if_online(chan, verb=False):
         '''
         Gets a stream object and sees if it's online
 
@@ -153,8 +140,7 @@ class NotifyApi(object):
         while True:
             chans = self.get_followed_channels({'offset': offset})
             for chan in chans:
-                pair = (chan, NotifyApi.check_if_online(chan, self.verbose,
-                        NotifyApi.build_headers(self.token)))
+                pair = (chan, NotifyApi.check_if_online(chan, self.verbose))
                 ret.append(pair)
 
             if len(chans) == 0:
