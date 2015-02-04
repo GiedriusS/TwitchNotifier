@@ -23,7 +23,11 @@ class NotifyApi(object):
         '''
         if not nick.strip():
             raise ValueError('nick passed to __init__ is empty')
-        if not isinstance(nick, str) or not isinstance(token, str):
+        if (
+                not isinstance(nick, str) or
+                not isinstance(token, str) or
+                not isinstance(verbose, bool)
+                ):
             raise TypeError('Invalid variable type passed to NotifyApi')
 
         self.nick = nick
