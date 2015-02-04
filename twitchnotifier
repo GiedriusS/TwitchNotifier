@@ -18,6 +18,8 @@ if __name__ == '__main__':
                         action='store_true')
     parser.add_argument('-u', '--user', help='Check status of only one user',
                         type=str)
+    parser.add_argument('-t', '--token', help='Tokens are not needed anymore. '
+                        'Option is left here for compability', type=str)
     args = parser.parse_args()
     if not args.nick and not args.user:
         print('You have to pass atleast either -c/--nick or '
