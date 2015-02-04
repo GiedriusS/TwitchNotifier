@@ -1,0 +1,7 @@
+For v0.2:
+
+* Consolidate online channel checking into much less requests to make it faster
+
+For v0.3:
+* Add configuration files and extra options such as customizable messages
+* Add a logging feature
