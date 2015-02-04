@@ -137,8 +137,11 @@ class NotifyApi(object):
         '''
         ret = []
         offset = 0
+        limit = 100
+
         while True:
-            chans = self.get_followed_channels({'offset': offset})
+            chans = self.get_followed_channels({'offset': offset,
+                                                'limit': limit})
             for chan in chans:
                 pair = (chan, NotifyApi.check_if_online(chan, self.verbose))
                 ret.append(pair)
@@ -146,7 +149,7 @@ class NotifyApi(object):
             if len(chans) == 0:
                 break
 
-            offset = offset + 25
+            offset = offset + limit
         return ret
 
     def diff(self, new, old):
