@@ -131,7 +131,7 @@ class NotifyApi(object):
 
     def get_status(self):
         '''
-        Get a list of lists in format of [name: True/False/None]
+        Get a list of lists in format of [name, True/False/None]
         True = channel is online, False = channel is offline, None = error
         '''
         ret = []
