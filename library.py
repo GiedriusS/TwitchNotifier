@@ -131,7 +131,7 @@ class NotifyApi(object):
 
     def get_status(self):
         '''
-        Get a list of tuples in format of (name, True/False/None)
+        Get a list of lists in format of [name: True/False/None]
         True = channel is online, False = channel is offline, None = error
         '''
         ret = []
@@ -139,16 +139,46 @@ class NotifyApi(object):
         limit = 100
 
         while True:
-            chans = self.get_followed_channels({'offset': offset,
-                                                'limit': limit})
-            for chan in chans:
-                pair = (chan, NotifyApi.check_if_online(chan, self.verbose))
-                ret.append(pair)
+            fol = self.get_followed_channels({'offset': offset,
+                                              'limit': limit})
+            for chan in fol:
+                ret.append([chan, None])
 
-            if len(chans) == 0:
+            if len(fol) == 0:
                 break
 
             offset = offset + limit
+
+        url = base_url + 'streams?channel=' + ','.join(elem[0] for elem in ret)
+
+        try:
+            r = requests.get(url, headers=head)
+        except Exception as e:
+            print('[ERROR] Exception in get_status::requests.get()',
+                  '\n[ERROR] __doc__ = ' + str(e.__doc__))
+            return ret
+
+        try:
+            json = r.json()
+        except ValueError:
+            print('[ERROR] Failed to parse json in get_status. '
+                  'A empty json object was created')
+            json = {}
+            if self.verbose:
+                print('r.text: ' + r.text, '\nr. status_code: ' +
+                      str(r.status_code), '\nr.headers: ' + str(r.headers))
+
+        for el in ret:
+            for stream in json['streams']:
+                if stream['channel']['name'] == el[0]:
+                    el[1] = True
+
+        # Turn all None channels into False
+        # Because we have already passed the part with exceptions
+        for el in ret:
+            if el[1] is None:
+                el[1] = False
+
         return ret
 
     def diff(self, new, old):
