@@ -161,17 +161,14 @@ class NotifyApi(object):
         try:
             json = r.json()
         except ValueError:
-            print('[ERROR] Failed to parse json in get_status. '
-                  'A empty json object was created')
-            json = {}
-            if self.verbose:
-                print('r.text: ' + r.text, '\nr. status_code: ' +
-                      str(r.status_code), '\nr.headers: ' + str(r.headers))
+            print('[ERROR] Failed to parse json in get_status. ')
+            return ret
 
         for el in ret:
-            for stream in json['streams']:
-                if stream['channel']['name'] == el[0]:
-                    el[1] = True
+            if 'streams' in json:
+                for stream in json['streams']:
+                    if stream['channel']['name'] == el[0]:
+                        el[1] = True
 
         # Turn all None channels into False
         # Because we have already passed the part with exceptions
