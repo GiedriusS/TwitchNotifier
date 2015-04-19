@@ -84,7 +84,7 @@ class NotifyApi(object):
         Positional arguments:
         chan - channel name
 
-        Returns True/False if channel is off/of, None if error occurs
+        Returns True/False if channel is on/off, None if error occurs
         '''
         url = base_url + '/streams/' + chan
 
