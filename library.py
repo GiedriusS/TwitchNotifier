@@ -57,12 +57,11 @@ class NotifyApi(object):
         try:
             json = r.json()
         except ValueError:
-            print('[ERROR] Failed to parse json in get_followed_channels. '
-                  'A empty json object was created')
-            json = {}
+            print('[ERROR] Failed to parse json in get_followed_channels()')
             if self.verbose:
                 print('r.text: ' + r.text, '\nr. status_code: ' +
                       str(r.status_code), '\nr.headers: ' + str(r.headers))
+            return []
 
         if ('status' in json and json['status'] == 404):
             raise NameError(self.nick + ' is a invalid nickname!')
