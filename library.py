@@ -187,14 +187,14 @@ class NotifyApi(object):
             if not new[i][1] is None and not old[i][1] is None:
                 if new[i][0] == old[i][0] and new[i][1] and not old[i][1]:
                     try:
-                        self.show_notification(new[i][0], "came online")
+                        self.show_notification(new[i][0], 'came online')
                     except RuntimeError:
                         print('[ERROR] Failed to show notification!\n'
                               '' + new[i][0] + ' came online')
 
                 if new[i][0] == old[i][0] and not new[i][1] and old[i][1]:
                     try:
-                        self.show_notification(new[i][0], "went offline")
+                        self.show_notification(new[i][0], 'went offline')
                     except RuntimeError:
                         print('[ERROR] Failed to show notification!\n'
                               '' + new[i][0] + ' went offline')
