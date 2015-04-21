@@ -24,12 +24,13 @@ if __name__ == '__main__':
     if not args.nick and not args.user:
         print('You have to pass atleast either -c/--nick or '
               '-u/--user to TwitchNotifier!')
-        sys.exit()
+        sys.exit(1)
 
     if args.user:
         status = library.NotifyApi.check_if_online(args.user, args.verbose)
         if status is None:
             print('Error getting information about', args.user)
+            sys.exit(1)
         elif status is True:
             print(args.user, 'is online')
         else:
