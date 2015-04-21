@@ -24,7 +24,7 @@ class NotifyApi(object):
         verbose - if we should be verbose in output
         '''
         if not nick.strip():
-            raise ValueError('nick passed to __init__ is empty')
+            raise ValueError('Nick passed to __init__ is empty')
         if not isinstance(nick, str) or not isinstance(verbose, bool):
             raise TypeError('Invalid variable type passed to NotifyApi')
 
@@ -52,19 +52,19 @@ class NotifyApi(object):
         try:
             r = requests.get(url, headers=head, params=payload)
         except Exception as e:
-            print('[ERROR] Exception in get_followed_channels::requests.get()',
-                  '\n[ERROR] __doc__ = ' + str(e.__doc__), file=sys.stderr)
+            print('Exception in get_followed_channels::requests.get()',
+                  '__doc__ = ' + str(e.__doc__), file=sys.stderr, sep='\n')
             return ret
 
         try:
             json = r.json()
         except ValueError:
-            print('[ERROR] Failed to parse json in get_followed_channels()',
+            print('Failed to parse json in get_followed_channels()',
                   file=sys.stderr)
             if self.verbose:
-                print('r.text: ' + r.text, '\nr. status_code: ' +
-                      str(r.status_code), '\nr.headers: ' + str(r.headers),
-                      file=sys.stderr)
+                print('r.text: ' + r.text, 'r.status_code: ' +
+                      str(r.status_code), 'r.headers: ' + str(r.headers),
+                      file=sys.stderr, sep='\n')
             return ret
 
         if 'status' in json and json['status'] == 404:
@@ -94,28 +94,28 @@ class NotifyApi(object):
         try:
             r = requests.get(url, headers=head)
         except Exception as e:
-            print('[ERROR] Exception in check_if_online::requests.get()',
-                  '\n[ERROR] __doc__ = ' + str(e.__doc__), file=sys.stderr)
+            print('Exception in check_if_online::requests.get()',
+                  '__doc__ = ' + str(e.__doc__), file=sys.stderr, sep='\n')
             return None
 
         try:
             json = r.json()
         except ValueError:
-            print('[ERROR] Failed to parse json in check_if_online',
+            print('Failed to parse json in check_if_online',
                   file=sys.stderr)
             if verb:
-                print('r.text: ' + r.text, '\nr. status_code: ' +
-                      str(r.status_code), '\nr.headers: ' + str(r.headers),
-                      file=sys.stderr)
+                print('r.text: ' + r.text, 'r.status_code: ' +
+                      str(r.status_code), 'r.headers: ' + str(r.headers),
+                      file=sys.stderr, sep='\n')
             return None
 
         if 'error' in json:
-            print('[ERROR] error in returned json object in check_if_online',
+            print('Error in returned json object in check_if_online',
                   file=sys.stderr)
             if verb:
-                print('r.text: ' + r.text, '\nr. status_code: ' +
-                      str(r.status_code), '\nr.headers: ' + str(r.headers),
-                      file=sys.stderr)
+                print('r.text: ' + r.text, 'r.status_code: ' +
+                      str(r.status_code), 'r.headers: ' + str(r.headers),
+                      file=sys.stderr, sep='\n')
             return None
 
         return False if 'stream' in json and json['stream'] is None else True
@@ -161,14 +161,14 @@ class NotifyApi(object):
         try:
             r = requests.get(url, headers=head)
         except Exception as e:
-            print('[ERROR] Exception in get_status::requests.get()',
-                  '\n[ERROR] __doc__ = ' + str(e.__doc__), file=sys.stderr)
+            print('Exception in get_status::requests.get()',
+                  '__doc__ = ' + str(e.__doc__), file=sys.stderr, sep='\n')
             return ret
 
         try:
             json = r.json()
         except ValueError:
-            print('[ERROR] Failed to parse json in get_status',
+            print('Failed to parse json in get_status',
                   file=sys.stderr)
             return ret
 
@@ -201,7 +201,7 @@ class NotifyApi(object):
                     try:
                         self.show_notification(new[i][0], 'came online')
                     except RuntimeError:
-                        print('[ERROR] Failed to show notification!',
+                        print('Failed to show notification!',
                               file=sys.stderr)
                         print(new[i][0] + ' came online')
 
@@ -209,7 +209,7 @@ class NotifyApi(object):
                     try:
                         self.show_notification(new[i][0], 'went offline')
                     except RuntimeError:
-                        print('[ERROR] Failed to show notification!',
+                        print('Failed to show notification!',
                               file=sys.stderr)
                         print(new[i][0] + ' went offline')
             i = i + 1
