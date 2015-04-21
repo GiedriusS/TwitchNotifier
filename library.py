@@ -4,7 +4,7 @@ from gi.repository import Notify
 
 base_url = 'https://api.twitch.tv/kraken/'
 client_id = 'pvv7ytxj4v7i10h0p3s7ewf4vpoz5fc'
-head = {'Accept': 'application/vnd.twitch.v2+json',
+head = {'Accept': 'application/vnd.twitch.v3+json',
         'Client-ID': client_id}
 
 
