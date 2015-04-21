@@ -104,10 +104,14 @@ class NotifyApi(object):
                       str(r.status_code), '\nr.headers: ' + str(r.headers))
             return None
 
-        if ('stream' in json and json['stream'] is None) or 'error' in json:
-            return False
-        else:
-            return True
+        if 'error' in json:
+            print('[ERROR] error in returned json object in check_if_online')
+            if verb:
+                print('r.text: ' + r.text, '\nr. status_code: ' +
+                      str(r.status_code), '\nr.headers: ' + str(r.headers))
+            return None
+
+        return False if 'stream' in json and json['stream'] is None else True
 
     def show_notification(self, title, message):
         '''
