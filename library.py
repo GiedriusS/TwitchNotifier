@@ -1,4 +1,5 @@
 import requests
+import sys
 from gi.repository import Notify
 
 base_url = 'https://api.twitch.tv/kraken/'
@@ -51,16 +52,18 @@ class NotifyApi(object):
             r = requests.get(url, headers=head, params=payload)
         except Exception as e:
             print('[ERROR] Exception in get_followed_channels::requests.get()',
-                  '\n[ERROR] __doc__ = ' + str(e.__doc__))
+                  '\n[ERROR] __doc__ = ' + str(e.__doc__), file=sys.stderr)
             return []
 
         try:
             json = r.json()
         except ValueError:
-            print('[ERROR] Failed to parse json in get_followed_channels()')
+            print('[ERROR] Failed to parse json in get_followed_channels()',
+                  file=sys.stderr)
             if self.verbose:
                 print('r.text: ' + r.text, '\nr. status_code: ' +
-                      str(r.status_code), '\nr.headers: ' + str(r.headers))
+                      str(r.status_code), '\nr.headers: ' + str(r.headers),
+                      file=sys.stderr)
             return []
 
         if ('status' in json and json['status'] == 404):
@@ -92,23 +95,27 @@ class NotifyApi(object):
             r = requests.get(url, headers=head)
         except Exception as e:
             print('[ERROR] Exception in check_if_online::requests.get()',
-                  '\n[ERROR] __doc__ = ' + str(e.__doc__))
+                  '\n[ERROR] __doc__ = ' + str(e.__doc__), file=sys.stderr)
             return None
 
         try:
             json = r.json()
         except ValueError:
-            print('[ERROR] Failed to parse json in check_if_online. ')
+            print('[ERROR] Failed to parse json in check_if_online',
+                  file=sys.stderr)
             if verb:
                 print('r.text: ' + r.text, '\nr. status_code: ' +
-                      str(r.status_code), '\nr.headers: ' + str(r.headers))
+                      str(r.status_code), '\nr.headers: ' + str(r.headers),
+                      file=sys.stderr)
             return None
 
         if 'error' in json:
-            print('[ERROR] error in returned json object in check_if_online')
+            print('[ERROR] error in returned json object in check_if_online',
+                  file=sys.stderr)
             if verb:
                 print('r.text: ' + r.text, '\nr. status_code: ' +
-                      str(r.status_code), '\nr.headers: ' + str(r.headers))
+                      str(r.status_code), '\nr.headers: ' + str(r.headers),
+                      file=sys.stderr)
             return None
 
         return False if 'stream' in json and json['stream'] is None else True
@@ -155,13 +162,14 @@ class NotifyApi(object):
             r = requests.get(url, headers=head)
         except Exception as e:
             print('[ERROR] Exception in get_status::requests.get()',
-                  '\n[ERROR] __doc__ = ' + str(e.__doc__))
+                  '\n[ERROR] __doc__ = ' + str(e.__doc__), file=sys.stderr)
             return ret
 
         try:
             json = r.json()
         except ValueError:
-            print('[ERROR] Failed to parse json in get_status. ')
+            print('[ERROR] Failed to parse json in get_status',
+                  file=sys.stderr)
             return ret
 
         for el in ret:
@@ -193,15 +201,17 @@ class NotifyApi(object):
                     try:
                         self.show_notification(new[i][0], 'came online')
                     except RuntimeError:
-                        print('[ERROR] Failed to show notification!\n'
-                              '' + new[i][0] + ' came online')
+                        print('[ERROR] Failed to show notification!',
+                              file=sys.stderr)
+                        print(new[i][0] + ' came online')
 
                 if new[i][0] == old[i][0] and not new[i][1] and old[i][1]:
                     try:
                         self.show_notification(new[i][0], 'went offline')
                     except RuntimeError:
-                        print('[ERROR] Failed to show notification!\n'
-                              '' + new[i][0] + ' went offline')
+                        print('[ERROR] Failed to show notification!',
+                              file=sys.stderr)
+                        print(new[i][0] + ' went offline')
             i = i + 1
 
 if __name__ == '__main__':
