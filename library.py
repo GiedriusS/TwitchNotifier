@@ -46,6 +46,7 @@ class NotifyApi(object):
 
         Returns a list of channels that user follows
         '''
+        ret = []
         url = base_url + '/users/' + self.nick + '/follows/channels'
 
         try:
@@ -53,7 +54,7 @@ class NotifyApi(object):
         except Exception as e:
             print('[ERROR] Exception in get_followed_channels::requests.get()',
                   '\n[ERROR] __doc__ = ' + str(e.__doc__), file=sys.stderr)
-            return []
+            return ret
 
         try:
             json = r.json()
@@ -64,12 +65,11 @@ class NotifyApi(object):
                 print('r.text: ' + r.text, '\nr. status_code: ' +
                       str(r.status_code), '\nr.headers: ' + str(r.headers),
                       file=sys.stderr)
-            return []
+            return ret
 
         if 'status' in json and json['status'] == 404:
             raise NameError(self.nick + ' is a invalid nickname!')
 
-        ret = []
         if 'follows' in json:
             for chan in json['follows']:
                 ret.append(chan['channel']['name'])
