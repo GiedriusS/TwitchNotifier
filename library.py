@@ -66,7 +66,7 @@ class NotifyApi(object):
                       file=sys.stderr)
             return []
 
-        if ('status' in json and json['status'] == 404):
+        if 'status' in json and json['status'] == 404:
             raise NameError(self.nick + ' is a invalid nickname!')
 
         ret = []
