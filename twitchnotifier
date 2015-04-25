@@ -3,6 +3,7 @@ import library
 import argparse
 import time
 import sys
+import os
 
 
 if __name__ == '__main__':
@@ -25,6 +26,10 @@ if __name__ == '__main__':
         print('You have to pass atleast either -c/--nick or '
               '-u/--user to TwitchNotifier!')
         sys.exit(1)
+    config_dir = os.environ.get('XDG_CONFIG_HOME',
+                                os.environ.get('HOME', '') + '/.config')
+    if args.verbose:
+        print('Configuration directory:', config_dir)
 
     if args.user:
         status = library.NotifyApi.check_if_online(args.user, args.verbose)
