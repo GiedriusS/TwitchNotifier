@@ -1,3 +1,4 @@
+import configparser
 import requests
 import sys
 from gi.repository import Notify
@@ -6,6 +7,49 @@ base_url = 'https://api.twitch.tv/kraken/'
 client_id = 'pvv7ytxj4v7i10h0p3s7ewf4vpoz5fc'
 head = {'Accept': 'application/vnd.twitch.v3+json',
         'Client-ID': client_id}
+
+
+class Settings(object):
+    '''
+    A simple wrapper around configparser to read configuration
+    '''
+    directory = ''
+    cfg = 'twitchnotifier.cfg'
+    section = 'messages'
+    user_message = '$1 is $2'
+    notification_title = '$1'
+    notification_content = '$1 is $2'
+
+    def __init__(self, directory):
+        '''
+        Initialize the object and read the file to get the info
+
+        Positional arguments:
+        directory - where the configuration file is stored
+        '''
+        if not isinstance(directory, str):
+            raise TypeError('Wrong type passed to Settings')
+        if not directory.strip():
+            raise ValueError('Empty directory passed to Settings')
+
+        self.directory = directory
+        self.conf = configparser.ConfigParser()
+        self.read_file()
+
+    def read_file(self):
+        '''
+        Read the file and get needed sections/info
+        '''
+        self.conf.read(self.directory + '/' + self.cfg)
+        try:
+            opt = self.conf[self.section]
+            self.user_message = opt.get('user_message', self.user_message)
+            self.notification_title = opt.get('notification_title',
+                                              self.notification_title)
+            self.notification_content = opt.get('notification_content',
+                                                self.notification_content)
+        except:
+            print('No messages key exists in ' + self.cfg, file=sys.stderr)
 
 
 class NotifyApi(object):
@@ -215,6 +259,8 @@ class NotifyApi(object):
             i = i + 1
 
 if __name__ == '__main__':
+    st = Settings('/home/giedrius/.config')
+
     core = NotifyApi('Xangold')
     list_of_chans = core.get_followed_channels()
     print(list_of_chans, len(list_of_chans))
