@@ -5,6 +5,19 @@ Optionally it can only check for offline/online channels once and exit using opt
 
 Uses twitch v3 api.
 
+# Message configuration
+Now you can configure the message format TwitchNotifier uses! Create a file called "twitchnotifier.cfg" in $XDG\_CONFIG\_HOME (or $HOME/.config, or /.config). You can look at twitchnotifier.cfg for a example. There has to be a section called "messages" with "user\_message", "notification\_title" and "notification\_content" (and with \_off suffix). Explanations of each key:
+
+| Key                              | Explanation                                                     | 
+| -------------------------------- | --------------------------------------------------------------- |
+| $1                               | Channel name                                                    |
+| $2                               | 'online' if channel is online, 'offline' if channel is offline  |
+| $3                               | (Only if online) Game name                                      |
+| $4                               | (Only if online) Number of viewers                              |
+| $5                               | (Only if online) Status or IOW text above the player            |
+| $6                               | (Only if online) Language                                       |
+| $7                               | (Only if online) Average FPS                                    |
+
 # Usage
 | Command                          | Explanation                                       |
 | -------------------------------- | ------------------------------------------------- |
