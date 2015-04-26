@@ -21,9 +21,9 @@ class Settings(object):
     user_message_off = '$1 is $2'
 
     notification_title = '$1'
-    notification_cont = '$1 is $2'
+    notification_cont = 'is $2'
     notification_title_off = '$1'
-    notification_cont_off = '$1 is $2'
+    notification_cont_off = 'is $2'
 
     list_entry = '$1'
     list_entry_off = '$1'
