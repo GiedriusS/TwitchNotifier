@@ -318,8 +318,10 @@ class NotifyApi(object):
         if stream:
             ret = ret.replace('$3', stream.get('game', ''))
             ret = ret.replace('$4', str(stream.get('viewers', '')))
-            ret = ret.replace('$5', stream.get('channel').get('status', ''))
-            ret = ret.replace('$6', stream.get('channel').get('language', ''))
+            ret = ret.replace('$5', stream.get('channel', {}).get('status',
+                              ''))
+            ret = ret.replace('$6', stream.get('channel', {}).get('language',
+                              ''))
             ret = ret.replace('$7', str(stream.get('average_fps')))
 
         return ret
