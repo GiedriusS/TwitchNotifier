@@ -25,6 +25,9 @@ class Settings(object):
     notification_title_off = '$1'
     notification_cont_off = '$1 is $2'
 
+    list_entry = '$1'
+    list_entry_off = '$1'
+
     def __init__(self, directory):
         '''
         Initialize the object and read the file to get the info
@@ -59,6 +62,9 @@ class Settings(object):
                                              self.notification_cont)
             self.notification_cont_off = opt.get('notification_content_off',
                                                  self.notification_cont_off)
+            self.list_entry = opt.get('list_entry', self.list_entry)
+            self.list_entry_off = opt.get('list_entry_off',
+                                          self.list_entry_off)
         except:
             print('No messages key exists in ' + self.cfg, file=sys.stderr)
 

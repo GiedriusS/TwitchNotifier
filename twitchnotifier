@@ -54,14 +54,14 @@ if __name__ == '__main__':
     if args.online:
         for chan in new:
             if chan[1]:
-                print(chan[0])
+                print(api.repl(chan[2], chan[0], api.fmt.list_entry))
         del(api)
         sys.exit()
 
     if args.offline:
         for chan in new:
             if not chan[1] is None and not chan[1]:
-                print(chan[0])
+                print(api.repl(chan[2], chan[0], api.fmt.list_entry_off))
         del(api)
         sys.exit()
 

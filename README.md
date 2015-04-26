@@ -6,7 +6,7 @@ Optionally it can only check for offline/online channels once and exit using opt
 Uses twitch v3 api.
 
 # Message configuration
-Now you can configure the message format TwitchNotifier uses! Create a file called "twitchnotifier.cfg" in $XDG\_CONFIG\_HOME (or $HOME/.config, or /.config). You can look at twitchnotifier.cfg for a example. There has to be a section called "messages" with "user\_message", "notification\_title" and "notification\_content" (and with \_off suffix). Explanations of each key:
+Now you can configure the message format TwitchNotifier uses! Create a file called "twitchnotifier.cfg" in $XDG\_CONFIG\_HOME (or $HOME/.config, or /.config). You can look at twitchnotifier.cfg for a example. There has to be a section called "messages" with "user\_message", "list\_entry", "notification\_title" and "notification\_content" (and with \_off suffix). Explanations of each key:
 
 | Key                              | Explanation                                                     | 
 | -------------------------------- | --------------------------------------------------------------- |
