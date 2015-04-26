@@ -35,15 +35,12 @@ if __name__ == '__main__':
     api = library.NotifyApi(args.nick, fmt, args.verbose)
 
     if args.user:
-        status = api.check_if_online(args.user, args.verbose)
+        msg, status = api.check_if_online(args.user, args.verbose)
         if status is None:
             print('Error getting information about', args.user)
             del(api)
             sys.exit(1)
-        elif status is True:
-            print(args.user, 'is online')
-        else:
-            print(args.user, 'is offline')
+        print(msg)
         del(api)
         sys.exit()
 

@@ -126,12 +126,13 @@ class NotifyApi(object):
 
     def check_if_online(self, chan, verb=False):
         '''
-        Gets a stream object and sees if it's online
+        Gets a stream object and returns a tuple in format of
+        (formatted_msg, status)
 
         Positional arguments:
         chan - channel name
 
-        Returns True/False if channel is on/off, None if error occurs
+        Returns a tuple of format (formatted_msg, status)
         '''
         url = base_url + '/streams/' + chan
 
@@ -140,7 +141,7 @@ class NotifyApi(object):
         except Exception as e:
             print('Exception in check_if_online::requests.get()',
                   '__doc__ = ' + str(e.__doc__), file=sys.stderr, sep='\n')
-            return None
+            return ('', None)
 
         try:
             json = r.json()
@@ -151,7 +152,7 @@ class NotifyApi(object):
                 print('r.text: ' + r.text, 'r.status_code: ' +
                       str(r.status_code), 'r.headers: ' + str(r.headers),
                       file=sys.stderr, sep='\n')
-            return None
+            return ('', None)
 
         if 'error' in json:
             print('Error in returned json object in check_if_online',
@@ -160,9 +161,10 @@ class NotifyApi(object):
                 print('r.text: ' + r.text, 'r.status_code: ' +
                       str(r.status_code), 'r.headers: ' + str(r.headers),
                       file=sys.stderr, sep='\n')
-            return None
+            return ('', None)
 
-        return False if 'stream' in json and json['stream'] is None else True
+        return (self.repl(json['stream'], chan, self.fmt.user_message),
+                False if 'stream' in json and json['stream'] is None else True)
 
     def show_notification(self, title, message):
         '''
@@ -240,8 +242,9 @@ class NotifyApi(object):
         '''
         i = 0
         while (i < len(new) - 1) and (i < len(old) - 1):
-            if not new[i][1] is None and not old[i][1] is None:
-                if new[i][0] == old[i][0] and new[i][1] and not old[i][1]:
+            if (not new[i][1] is None and not old[i][1] is None and
+                    new[i][0] == old[i][0]):
+                if new[i][1] and not old[i][1]:
                     try:
                         self.show_notification(new[i][0], 'came online')
                     except RuntimeError:
@@ -249,7 +252,7 @@ class NotifyApi(object):
                               file=sys.stderr)
                         print(new[i][0] + ' came online')
 
-                if new[i][0] == old[i][0] and not new[i][1] and old[i][1]:
+                if not new[i][1] and old[i][1]:
                     try:
                         self.show_notification(new[i][0], 'went offline')
                     except RuntimeError:
@@ -258,10 +261,10 @@ class NotifyApi(object):
                         print(new[i][0] + ' went offline')
             i = i + 1
 
-    def repl(self, stream, msg):
+    def repl(self, stream, chan, msg):
         '''
         Returns msg with replaced stuff from stream
-        Note that only $2 will be replaced if stream is offline
+        Note that only $1 and $2 will be replaced if stream is offline
 
         Keys:
         $1 - streamer username
@@ -276,21 +279,23 @@ class NotifyApi(object):
 
         Positional arguments:
         stream - stream object (a dictionary with certain values)
+        chan - channel name
         msg - a format string
 
         Returns msg formatted
         '''
         ret = msg
-        ret.replace('$2', 'online' if stream else 'offline')
+        ret = ret.replace('$2', 'online' if stream else 'offline')
+        ret = ret.replace('$1', chan)
+
         if stream:
-            ret.replace('$1', stream['channel']['name'])
-            ret.replace('$3', stream['channel']['game'])
-            ret.replace('$4', stream['channel']['viewers'])
-            ret.replace('$5', stream['channel']['average_fps'])
-            ret.replace('$6', stream['channel']['views'])
-            ret.replace('$7', stream['channel']['followers'])
-            ret.replace('$8', stream['channel']['language'])
-            ret.replace('$9', stream['channel']['status'])
+            ret = ret.replace('$3', stream['channel']['game'])
+            ret = ret.replace('$4', str(stream['viewers']))
+            ret = ret.replace('$5', str(stream['average_fps']))
+            ret = ret.replace('$6', str(stream['channel']['views']))
+            ret = ret.replace('$7', str(stream['channel']['followers']))
+            ret = ret.replace('$8', stream['channel']['language'])
+            ret = ret.replace('$9', stream['channel']['status'])
         return ret
 
 if __name__ == '__main__':
