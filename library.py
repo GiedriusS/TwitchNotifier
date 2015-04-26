@@ -184,7 +184,7 @@ class NotifyApi(object):
 
     def get_status(self):
         '''
-        Get a list of lists in format of [name, True/False/None]
+        Get a list of lists in format of [name, True/False/None, stream_obj]
         True = channel is online, False = channel is offline, None = error
         '''
         ret = []
@@ -195,7 +195,7 @@ class NotifyApi(object):
             fol = self.get_followed_channels({'offset': offset,
                                               'limit': limit})
             for chan in fol:
-                ret.append([chan, None])
+                ret.append([chan, None, None])
 
             if len(fol) == 0:
                 break
@@ -223,6 +223,7 @@ class NotifyApi(object):
                 for stream in json['streams']:
                     if stream['channel']['name'] == el[0]:
                         el[1] = True
+                        el[2] = stream
 
         # Turn all None channels into False
         # Because we have already passed the part with exceptions
@@ -244,9 +245,13 @@ class NotifyApi(object):
         while (i < len(new) - 1) and (i < len(old) - 1):
             if (not new[i][1] is None and not old[i][1] is None and
                     new[i][0] == old[i][0]):
+                title = self.repl(new[i][2], new[i][0],
+                                  self.fmt.notification_title)
+                message = self.repl(new[i][2], new[i][0],
+                                    self.fmt.notification_content)
                 if new[i][1] and not old[i][1]:
                     try:
-                        self.show_notification(new[i][0], 'came online')
+                        self.show_notification(title, message)
                     except RuntimeError:
                         print('Failed to show notification!',
                               file=sys.stderr)
@@ -254,7 +259,7 @@ class NotifyApi(object):
 
                 if not new[i][1] and old[i][1]:
                     try:
-                        self.show_notification(new[i][0], 'went offline')
+                        self.show_notification(title, message)
                     except RuntimeError:
                         print('Failed to show notification!',
                               file=sys.stderr)
@@ -289,13 +294,14 @@ class NotifyApi(object):
         ret = ret.replace('$1', chan)
 
         if stream:
-            ret = ret.replace('$3', stream['channel']['game'])
+            ret = ret.replace('$3', stream['game'])
             ret = ret.replace('$4', str(stream['viewers']))
             ret = ret.replace('$5', str(stream['average_fps']))
             ret = ret.replace('$6', str(stream['channel']['views']))
             ret = ret.replace('$7', str(stream['channel']['followers']))
             ret = ret.replace('$8', stream['channel']['language'])
             ret = ret.replace('$9', stream['channel']['status'])
+
         return ret
 
 if __name__ == '__main__':
@@ -307,3 +313,4 @@ if __name__ == '__main__':
     stat = core.get_status()
     print(core.check_if_online('nadeshot'))
     print(stat)
+    core.show_notification('Hello', 'From TwitchNotifier')
