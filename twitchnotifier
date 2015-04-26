@@ -3,8 +3,12 @@ import library
 import argparse
 import time
 import sys
+import signal
 import os
 
+
+def handler(signum, frame):
+    api.fmt.read_file()
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -33,6 +37,7 @@ if __name__ == '__main__':
 
     fmt = library.Settings(config_dir)
     api = library.NotifyApi(args.nick, fmt, args.verbose)
+    signal.signal(signal.SIGHUP, handler)
 
     if args.user:
         msg, status = api.check_if_online(args.user, args.verbose)

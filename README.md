@@ -18,6 +18,8 @@ Now you can configure the message format TwitchNotifier uses! Create a file call
 | $6                               | (Only if online) Language                                       |
 | $7                               | (Only if online) Average FPS                                    |
 
+You don't have to reload twitchnotifier to use new configuration! Send SIGHUP to the TwitchNotifier process to make it reload the configuration. For example: `killall -s HUP twitchnotifier`.
+
 # Usage
 | Command                          | Explanation                                       |
 | -------------------------------- | ------------------------------------------------- |
