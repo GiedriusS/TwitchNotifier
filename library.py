@@ -262,18 +262,12 @@ class NotifyApi(object):
         while (i < len(new) - 1) and (i < len(old) - 1):
             if (not new[i][1] is None and not old[i][1] is None and
                     new[i][0] == old[i][0]):
-                if new[i][1]:
+
+                if new[i][1] and not old[i][1]:
                     title = self.repl(new[i][2], new[i][0],
                                       self.fmt.notification_title)
                     message = self.repl(new[i][2], new[i][0],
                                         self.fmt.notification_cont)
-                else:
-                    title = self.repl(new[i][2], new[i][0],
-                                      self.fmt.notification_title_off)
-                    message = self.repl(new[i][2], new[i][0],
-                                        self.fmt.notification_cont_off)
-
-                if new[i][1] and not old[i][1]:
                     try:
                         self.show_notification(title, message)
                     except RuntimeError:
@@ -282,6 +276,10 @@ class NotifyApi(object):
                         print(new[i][0] + ' came online')
 
                 elif not new[i][1] and old[i][1]:
+                    title = self.repl(new[i][2], new[i][0],
+                                      self.fmt.notification_title_off)
+                    message = self.repl(new[i][2], new[i][0],
+                                        self.fmt.notification_cont_off)
                     try:
                         self.show_notification(title, message)
                     except RuntimeError:
