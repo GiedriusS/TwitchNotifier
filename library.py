@@ -265,7 +265,7 @@ class NotifyApi(object):
         old - older list returned from get_status()
         '''
         i = 0
-        while (i < len(new) - 1) and (i < len(old) - 1):
+        while i < len(new) and i < len(old):
             if (not new[i][1] is None and not old[i][1] is None and
                     new[i][0] == old[i][0]):
 
