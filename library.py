@@ -59,21 +59,21 @@ class NotifyApi(object):
     nick = ''
     verbose = False
 
-    def __init__(self, nick, verbose=False):
+    def __init__(self, nick, fmt, verbose=False):
         '''
         Initialize the object with a nick and verbose option
 
         Positional arguments:
         nick - nickname of the user
+        fmt - a Settings object
         verbose - if we should be verbose in output
         '''
-        if not nick.strip():
-            raise ValueError('Nick passed to __init__ is empty')
         if not isinstance(nick, str) or not isinstance(verbose, bool):
             raise TypeError('Invalid variable type passed to NotifyApi')
 
         self.nick = nick
         self.verbose = verbose
+        self.fmt = fmt
 
         if not Notify.init('TwitchNotifier'):
             raise RuntimeError('Failed to init libnotify')
@@ -124,7 +124,7 @@ class NotifyApi(object):
         '''Uninit libnotify object'''
         Notify.uninit()
 
-    def check_if_online(chan, verb=False):
+    def check_if_online(self, chan, verb=False):
         '''
         Gets a stream object and sees if it's online
 

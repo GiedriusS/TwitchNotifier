@@ -31,18 +31,22 @@ if __name__ == '__main__':
     if args.verbose:
         print('Configuration directory:', config_dir)
 
+    fmt = library.Settings(config_dir)
+    api = library.NotifyApi(args.nick, fmt, args.verbose)
+
     if args.user:
-        status = library.NotifyApi.check_if_online(args.user, args.verbose)
+        status = api.check_if_online(args.user, args.verbose)
         if status is None:
             print('Error getting information about', args.user)
+            del(api)
             sys.exit(1)
         elif status is True:
             print(args.user, 'is online')
         else:
             print(args.user, 'is offline')
+        del(api)
         sys.exit()
 
-    api = library.NotifyApi(args.nick, args.verbose)
     new = api.get_status()
 
     if args.online:
