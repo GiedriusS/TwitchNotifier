@@ -258,6 +258,41 @@ class NotifyApi(object):
                         print(new[i][0] + ' went offline')
             i = i + 1
 
+    def repl(self, stream, msg):
+        '''
+        Returns msg with replaced stuff from stream
+        Note that only $2 will be replaced if stream is offline
+
+        Keys:
+        $1 - streamer username
+        $2 - offline/online
+        $3 - game
+        $4 - viewers
+        $5 - average FPS
+        $6 - views
+        $7 - followers
+        $8 - language
+        $9 - status
+
+        Positional arguments:
+        stream - stream object (a dictionary with certain values)
+        msg - a format string
+
+        Returns msg formatted
+        '''
+        ret = msg
+        ret.replace('$2', 'online' if stream else 'offline')
+        if stream:
+            ret.replace('$1', stream['channel']['name'])
+            ret.replace('$3', stream['channel']['game'])
+            ret.replace('$4', stream['channel']['viewers'])
+            ret.replace('$5', stream['channel']['average_fps'])
+            ret.replace('$6', stream['channel']['views'])
+            ret.replace('$7', stream['channel']['followers'])
+            ret.replace('$8', stream['channel']['language'])
+            ret.replace('$9', stream['channel']['status'])
+        return ret
+
 if __name__ == '__main__':
     st = Settings('/home/giedrius/.config')
 
