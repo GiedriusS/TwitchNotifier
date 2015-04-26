@@ -235,8 +235,8 @@ class NotifyApi(object):
                   file=sys.stderr)
             return ret
 
-        for el in ret:
-            if 'streams' in json:
+        if 'streams' in json:
+            for el in ret:
                 for stream in json['streams']:
                     if stream['channel']['name'] == el[0]:
                         el[1] = True
