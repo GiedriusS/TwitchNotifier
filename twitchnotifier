@@ -11,10 +11,10 @@ if __name__ == '__main__':
     parser.add_argument('-c', '--nick', help='Twitch nickname', default='')
     parser.add_argument('-i', '--interval', help='Interval between checks '
                         'in seconds. Default: 120', type=int, default=120)
-    parser.add_argument('-n', '--online', help='Only check for online channels '
-                        'a user follows', action='store_true')
-    parser.add_argument('-f', '--offline', help='Only check for offline channels '
-                        'a user follows', action='store_true')
+    parser.add_argument('-n', '--online', help='Only check for online channels'
+                        ' a user follows', action='store_true')
+    parser.add_argument('-f', '--offline', help='Only check for offline'
+                        ' channels a user follows', action='store_true')
     parser.add_argument('-v', '--verbose', help='Enable verbose output',
                         action='store_true')
     parser.add_argument('-u', '--user', help='Check status of only one user',
