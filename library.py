@@ -51,7 +51,6 @@ class Settings(object):
             self.user_message = opt.get('user_message', self.user_message)
             self.user_message_off = opt.get('user_message_off',
                                             self.user_message_off)
-
             self.notification_title = opt.get('notification_title',
                                               self.notification_title)
             self.notification_title_off = opt.get('notification_title_off',
@@ -282,7 +281,7 @@ class NotifyApi(object):
                               file=sys.stderr)
                         print(new[i][0] + ' came online')
 
-                if not new[i][1] and old[i][1]:
+                elif not new[i][1] and old[i][1]:
                     try:
                         self.show_notification(title, message)
                     except RuntimeError:
@@ -317,11 +316,11 @@ class NotifyApi(object):
         ret = ret.replace('$1', chan)
 
         if stream:
-            ret = ret.replace('$3', stream['game'])
-            ret = ret.replace('$4', str(stream['viewers']))
-            ret = ret.replace('$5', stream['channel']['status'])
-            ret = ret.replace('$6', stream['channel']['language'])
-            ret = ret.replace('$7', str(stream['average_fps']))
+            ret = ret.replace('$3', stream.get('game', ''))
+            ret = ret.replace('$4', str(stream.get('viewers', '')))
+            ret = ret.replace('$5', stream.get('channel').get('status', ''))
+            ret = ret.replace('$6', stream.get('channel').get('language', ''))
+            ret = ret.replace('$7', str(stream.get('average_fps')))
 
         return ret
 
