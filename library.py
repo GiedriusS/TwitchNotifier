@@ -261,9 +261,9 @@ class NotifyApi(object):
 if __name__ == '__main__':
     st = Settings('/home/giedrius/.config')
 
-    core = NotifyApi('Xangold')
+    core = NotifyApi('Xangold', st, True)
     list_of_chans = core.get_followed_channels()
     print(list_of_chans, len(list_of_chans))
     stat = core.get_status()
-    print(NotifyApi.check_if_online('nadeshot'))
+    print(core.check_if_online('nadeshot'))
     print(stat)
