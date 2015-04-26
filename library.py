@@ -16,9 +16,14 @@ class Settings(object):
     directory = ''
     cfg = 'twitchnotifier.cfg'
     section = 'messages'
+
     user_message = '$1 is $2'
+    user_message_off = '$1 is $2'
+
     notification_title = '$1'
-    notification_content = '$1 is $2'
+    notification_cont = '$1 is $2'
+    notification_title_off = '$1'
+    notification_cont_off = '$1 is $2'
 
     def __init__(self, directory):
         '''
@@ -44,10 +49,17 @@ class Settings(object):
         try:
             opt = self.conf[self.section]
             self.user_message = opt.get('user_message', self.user_message)
+            self.user_message_off = opt.get('user_message_off',
+                                            self.user_message_off)
+
             self.notification_title = opt.get('notification_title',
                                               self.notification_title)
-            self.notification_content = opt.get('notification_content',
-                                                self.notification_content)
+            self.notification_title_off = opt.get('notification_title_off',
+                                                  self.notification_title_off)
+            self.notification_cont = opt.get('notification_content',
+                                             self.notification_cont)
+            self.notification_cont_off = opt.get('notification_content_off',
+                                                 self.notification_cont_off)
         except:
             print('No messages key exists in ' + self.cfg, file=sys.stderr)
 
@@ -163,8 +175,14 @@ class NotifyApi(object):
                       file=sys.stderr, sep='\n')
             return ('', None)
 
-        return (self.repl(json['stream'], chan, self.fmt.user_message),
-                False if 'stream' in json and json['stream'] is None else True)
+        online = False if 'stream' in json and json['stream'] is None else True
+
+        if online:
+            return (self.repl(json['stream'], chan, self.fmt.user_message),
+                    online)
+        else:
+            return (self.repl(json['stream'], chan, self.fmt.user_message_off),
+                    online)
 
     def show_notification(self, title, message):
         '''
@@ -245,10 +263,17 @@ class NotifyApi(object):
         while (i < len(new) - 1) and (i < len(old) - 1):
             if (not new[i][1] is None and not old[i][1] is None and
                     new[i][0] == old[i][0]):
-                title = self.repl(new[i][2], new[i][0],
-                                  self.fmt.notification_title)
-                message = self.repl(new[i][2], new[i][0],
-                                    self.fmt.notification_content)
+                if new[i][1]:
+                    title = self.repl(new[i][2], new[i][0],
+                                      self.fmt.notification_title)
+                    message = self.repl(new[i][2], new[i][0],
+                                        self.fmt.notification_cont)
+                else:
+                    title = self.repl(new[i][2], new[i][0],
+                                      self.fmt.notification_title_off)
+                    message = self.repl(new[i][2], new[i][0],
+                                        self.fmt.notification_cont_off)
+
                 if new[i][1] and not old[i][1]:
                     try:
                         self.show_notification(title, message)
@@ -276,11 +301,9 @@ class NotifyApi(object):
         $2 - offline/online
         $3 - game
         $4 - viewers
-        $5 - average FPS
-        $6 - views
-        $7 - followers
-        $8 - language
-        $9 - status
+        $5 - status
+        $6 - language
+        $7 - average FPS
 
         Positional arguments:
         stream - stream object (a dictionary with certain values)
@@ -296,11 +319,9 @@ class NotifyApi(object):
         if stream:
             ret = ret.replace('$3', stream['game'])
             ret = ret.replace('$4', str(stream['viewers']))
-            ret = ret.replace('$5', str(stream['average_fps']))
-            ret = ret.replace('$6', str(stream['channel']['views']))
-            ret = ret.replace('$7', str(stream['channel']['followers']))
-            ret = ret.replace('$8', stream['channel']['language'])
-            ret = ret.replace('$9', stream['channel']['status'])
+            ret = ret.replace('$5', stream['channel']['status'])
+            ret = ret.replace('$6', stream['channel']['language'])
+            ret = ret.replace('$7', str(stream['average_fps']))
 
         return ret
 
