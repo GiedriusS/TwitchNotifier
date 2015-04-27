@@ -1,4 +1,6 @@
 import configparser
+import time
+import re
 import requests
 import sys
 from gi.repository import Notify
@@ -54,22 +56,30 @@ class Settings(object):
         self.conf.read(self.directory + '/' + self.cfg)
         try:
             opt = self.conf[self.section]
-            self.user_message = opt.get('user_message', self.user_message)
+            self.user_message = opt.get('user_message', self.user_message,
+                                        raw=True)
             self.user_message_off = opt.get('user_message_off',
-                                            self.user_message_off)
+                                            self.user_message_off,
+                                            raw=True)
             self.notification_title = opt.get('notification_title',
-                                              self.notification_title)
+                                              self.notification_title,
+                                              raw=True)
             self.notification_title_off = opt.get('notification_title_off',
-                                                  self.notification_title_off)
+                                                  self.notification_title_off,
+                                                  raw=True)
             self.notification_cont = opt.get('notification_content',
-                                             self.notification_cont)
+                                             self.notification_cont,
+                                             raw=True)
             self.notification_cont_off = opt.get('notification_content_off',
-                                                 self.notification_cont_off)
-            self.list_entry = opt.get('list_entry', self.list_entry)
+                                                 self.notification_cont_off,
+                                                 raw=True)
+            self.list_entry = opt.get('list_entry', self.list_entry, raw=True)
             self.list_entry_off = opt.get('list_entry_off',
-                                          self.list_entry_off)
-            self.log_fmt = opt.get('log_fmt', self.log_fmt)
-            self.log_fmt_off = opt.get('log_fmt_off', self.log_fmt_off)
+                                          self.list_entry_off,
+                                          raw=True)
+            self.log_fmt = opt.get('log_fmt', self.log_fmt, raw=True)
+            self.log_fmt_off = opt.get('log_fmt_off', self.log_fmt_off,
+                                       raw=True)
 
         except:
             print('No messages key exists in ' + self.cfg, file=sys.stderr)
@@ -338,6 +348,7 @@ class NotifyApi(object):
         ret = msg
         ret = ret.replace('$2', 'online' if stream else 'offline')
         ret = ret.replace('$1', chan)
+        ret = re.sub(r'\$\{(.*)\}', lambda x: time.strftime(x.group(1)), ret)
 
         if stream:
             ret = ret.replace('$3', stream.get('game', ''))

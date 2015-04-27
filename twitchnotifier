@@ -25,6 +25,8 @@ if __name__ == '__main__':
                         type=str)
     parser.add_argument('-t', '--token', help='Tokens are not needed anymore. '
                         'Option is left here for compability', type=str)
+    parser.add_argument('-l', '--logfile', help='File used for logging events '
+                        'in -c/--nick mode', type=str)
     args = parser.parse_args()
     if not args.nick and not args.user:
         print('You have to pass atleast either -c/--nick or '
@@ -36,7 +38,7 @@ if __name__ == '__main__':
         print('Configuration directory:', config_dir)
 
     fmt = library.Settings(config_dir)
-    api = library.NotifyApi(args.nick, fmt, args.verbose)
+    api = library.NotifyApi(args.nick, fmt, args.logfile, args.verbose)
     signal.signal(signal.SIGHUP, handler)
 
     if args.user:
