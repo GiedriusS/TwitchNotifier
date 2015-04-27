@@ -17,6 +17,7 @@ Now you can configure the message format TwitchNotifier uses! Create a file call
 | $5                               | (Only if online) Status or IOW text above the player            |
 | $6                               | (Only if online) Language                                       |
 | $7                               | (Only if online) Average FPS                                    |
+| ${foo}                           | Replaced as if strftime is applied on foo                       |
 
 You don't have to reload twitchnotifier to use new configuration! Send SIGHUP to the TwitchNotifier process to make it reload the configuration. For example: `killall -s HUP twitchnotifier`.
 
@@ -27,6 +28,7 @@ You don't have to reload twitchnotifier to use new configuration! Send SIGHUP to
 | twitchnotifier -c Xangold        | Watch followed channels of Xangold                |
 | twitchnotifier -c Xangold -n     | Check for online channels followed by Xangold     |
 | twitchnotifier -h                | Show help message                                 |
+| twitchnotifier -c Xangold -l ~/a | Listen for events on Xangold and log to ~/a       |
 
 # Requirements
 | Name            | Version   |
@@ -46,3 +48,4 @@ You don't have to reload twitchnotifier to use new configuration! Send SIGHUP to
 | -v/--verbose   | Enable verbose output           |
 | -u/--user      | Check status of user            |
 | -c/--nick      | Watch NICK followed channels    |
+| -l/--logfile   | Also put new events to log file |

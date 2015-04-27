@@ -30,8 +30,8 @@ class Settings(object):
     list_entry = '$1'
     list_entry_off = '$1'
 
-    log_fmt = '$1 is $2'
-    log_fmt_off = '$1 is $2'
+    log_fmt = '(${%d %H:%M:%S}) $1 is $2'
+    log_fmt_off = '$(${%d %H:%M:%S}) 1 is $2'
 
     def __init__(self, directory):
         '''
@@ -337,6 +337,7 @@ class NotifyApi(object):
         $5 - status
         $6 - language
         $7 - average FPS
+        ${} - everything between {} will be replaced as if strftime is applied
 
         Positional arguments:
         stream - stream object (a dictionary with certain values)
