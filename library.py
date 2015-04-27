@@ -28,6 +28,9 @@ class Settings(object):
     list_entry = '$1'
     list_entry_off = '$1'
 
+    log_fmt = '$1 is $2'
+    log_fmt_off = '$1 is $2'
+
     def __init__(self, directory):
         '''
         Initialize the object and read the file to get the info
@@ -65,6 +68,9 @@ class Settings(object):
             self.list_entry = opt.get('list_entry', self.list_entry)
             self.list_entry_off = opt.get('list_entry_off',
                                           self.list_entry_off)
+            self.log_fmt = opt.get('log_fmt', self.log_fmt)
+            self.log_fmt_off = opt.get('log_fmt_off', self.log_fmt_off)
+
         except:
             print('No messages key exists in ' + self.cfg, file=sys.stderr)
 
@@ -75,8 +81,9 @@ class NotifyApi(object):
     '''
     nick = ''
     verbose = False
+    fl = None
 
-    def __init__(self, nick, fmt, verbose=False):
+    def __init__(self, nick, fmt, logfile, verbose=False):
         '''
         Initialize the object with a nick and verbose option
 
@@ -91,6 +98,8 @@ class NotifyApi(object):
         self.nick = nick
         self.verbose = verbose
         self.fmt = fmt
+        if logfile is not None:
+            self.fl = open(logfile, 'a')
 
         if not Notify.init('TwitchNotifier'):
             raise RuntimeError('Failed to init libnotify')
@@ -140,6 +149,8 @@ class NotifyApi(object):
     def __del__(self):
         '''Uninit libnotify object'''
         Notify.uninit()
+        if self.fl is not None:
+            self.fl.close()
 
     def check_if_online(self, chan, verb=False):
         '''
@@ -274,6 +285,7 @@ class NotifyApi(object):
                                       self.fmt.notification_title)
                     message = self.repl(new[i][2], new[i][0],
                                         self.fmt.notification_cont)
+                    self.log(new[i][2], new[i][0], self.fmt.log_fmt)
                     try:
                         self.show_notification(title, message)
                     except RuntimeError:
@@ -286,6 +298,7 @@ class NotifyApi(object):
                                       self.fmt.notification_title_off)
                     message = self.repl(new[i][2], new[i][0],
                                         self.fmt.notification_cont_off)
+                    self.log(new[i][2], new[i][0], self.fmt.log_fmt_off)
                     try:
                         self.show_notification(title, message)
                     except RuntimeError:
@@ -293,6 +306,13 @@ class NotifyApi(object):
                               file=sys.stderr)
                         print(new[i][0] + ' went offline')
             i = i + 1
+
+    def log(self, stream, chan, msg):
+        if self.fl is None:
+            return
+        fmted = self.repl(stream, chan, msg)
+        self.fl.write(self.repl(stream, chan, fmted) + '\n')
+        self.fl.flush()
 
     def repl(self, stream, chan, msg):
         '''
