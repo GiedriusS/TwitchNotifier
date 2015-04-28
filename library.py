@@ -365,7 +365,7 @@ class NotifyApi(object):
 if __name__ == '__main__':
     st = Settings('/home/giedrius/.config')
 
-    core = NotifyApi('Xangold', st, True)
+    core = NotifyApi('Xangold', st, '/home/giedrius/log', True)
     list_of_chans = core.get_followed_channels()
     print(list_of_chans, len(list_of_chans))
     stat = core.get_status()
