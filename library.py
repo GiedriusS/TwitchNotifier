@@ -301,7 +301,7 @@ class NotifyApi(object):
                     except RuntimeError:
                         print('Failed to show notification!',
                               file=sys.stderr)
-                        print(new[i][0] + ' came online')
+                        print(new[i][0] + ' is online')
 
                 elif not new[i][1] and old[i][1]:
                     title = self.repl(new[i][2], new[i][0],
@@ -314,7 +314,7 @@ class NotifyApi(object):
                     except RuntimeError:
                         print('Failed to show notification!',
                               file=sys.stderr)
-                        print(new[i][0] + ' went offline')
+                        print(new[i][0] + ' is offline')
             i = i + 1
 
     def log(self, stream, chan, msg):
