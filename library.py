@@ -351,7 +351,7 @@ class NotifyApi(object):
         ret = ret.replace('$1', chan)
         ret = re.sub(r'\$\{(.*)\}', lambda x: time.strftime(x.group(1)), ret)
 
-        if stream:
+        if stream and isinstance(stream, dict):
             ret = ret.replace('$3', stream.get('game', ''))
             ret = ret.replace('$4', str(stream.get('viewers', '')))
             ret = ret.replace('$5', stream.get('channel', {}).get('status',
