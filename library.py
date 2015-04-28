@@ -320,8 +320,7 @@ class NotifyApi(object):
     def log(self, stream, chan, msg):
         if self.fl is None:
             return
-        fmted = self.repl(stream, chan, msg)
-        self.fl.write(self.repl(stream, chan, fmted) + '\n')
+        self.fl.write(self.repl(stream, chan, msg) + '\n')
         self.fl.flush()
 
     def repl(self, stream, chan, msg):
