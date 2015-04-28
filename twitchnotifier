@@ -42,7 +42,7 @@ if __name__ == '__main__':
     signal.signal(signal.SIGHUP, handler)
 
     if args.user:
-        msg, status = api.check_if_online(args.user, args.verbose)
+        msg, status = api.check_if_online(args.user)
         if status is None:
             print('Error getting information about', args.user)
             del(api)

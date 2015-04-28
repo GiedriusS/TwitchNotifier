@@ -162,7 +162,7 @@ class NotifyApi(object):
         if self.fl is not None:
             self.fl.close()
 
-    def check_if_online(self, chan, verb=False):
+    def check_if_online(self, chan):
         '''
         Gets a stream object and returns a tuple in format of
         (formatted_msg, status)
@@ -186,7 +186,7 @@ class NotifyApi(object):
         except ValueError:
             print('Failed to parse json in check_if_online',
                   file=sys.stderr)
-            if verb:
+            if self.verbose:
                 print('r.text: ' + r.text, 'r.status_code: ' +
                       str(r.status_code), 'r.headers: ' + str(r.headers),
                       file=sys.stderr, sep='\n')
@@ -195,7 +195,7 @@ class NotifyApi(object):
         if 'error' in json:
             print('Error in returned json object in check_if_online',
                   file=sys.stderr)
-            if verb:
+            if self.verbose:
                 print('r.text: ' + r.text, 'r.status_code: ' +
                       str(r.status_code), 'r.headers: ' + str(r.headers),
                       file=sys.stderr, sep='\n')
