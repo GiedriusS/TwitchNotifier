@@ -22,13 +22,13 @@ Now you can configure the message format TwitchNotifier uses! Create a file call
 You don't have to reload twitchnotifier to use new configuration! Send SIGHUP to the TwitchNotifier process to make it reload the configuration. For example: `killall -s HUP twitchnotifier`.
 
 # Usage
-| Command                          | Explanation                                       |
-| -------------------------------- | ------------------------------------------------- |
-| twitchnotifier -u nadeshot       | Check if nadeshot is online                       |
-| twitchnotifier -c Xangold        | Watch followed channels of Xangold                |
-| twitchnotifier -c Xangold -n     | Check for online channels followed by Xangold     |
-| twitchnotifier -h                | Show help message                                 |
-| twitchnotifier -c Xangold -l ~/a | Listen for events on Xangold and log to ~/a       |
+| Command                            | Explanation                                       |
+| ---------------------------------- | ------------------------------------------------- |
+| twitchnotifier -u nadeshot         | Check if nadeshot is online                       |
+| twitchnotifier -c Xangold          | Watch followed channels of Xangold                |
+| twitchnotifier -c Xangold -n       | Check for online channels followed by Xangold     |
+| twitchnotifier -h                  | Show help message                                 |
+| twitchnotifier -c Xangold -l ~/log | Listen for events on Xangold and log to '~/log'   |
 
 # Requirements
 | Name            | Version   |
