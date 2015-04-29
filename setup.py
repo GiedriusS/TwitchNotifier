@@ -1,7 +1,7 @@
 from distutils.core import setup
 
 setup(name='TwitchNotifier',
-      version='0.2',
+      version='0.3',
       description='Daemon that notifies you using libnotify if followed chan '
                   'goes off/on. Optionally only does this once.',
       author='Giedrius Statkevičius',
