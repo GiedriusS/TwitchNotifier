@@ -48,7 +48,10 @@ if __name__ == '__main__':
                 print('Error getting information about', user)
             else:
                 print(msg)
+
         del(api)
+        if status is None:
+            sys.exit(1)
         sys.exit()
 
     new = api.get_status()
