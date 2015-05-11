@@ -42,12 +42,12 @@ if __name__ == '__main__':
     signal.signal(signal.SIGHUP, handler)
 
     if args.user:
-        msg, status = api.check_if_online(args.user)
-        if status is None:
-            print('Error getting information about', args.user)
-            del(api)
-            sys.exit(1)
-        print(msg)
+        for user in args.user.split(','):
+            msg, status = api.check_if_online(user)
+            if status is None:
+                print('Error getting information about', user)
+            else:
+                print(msg)
         del(api)
         sys.exit()
 
