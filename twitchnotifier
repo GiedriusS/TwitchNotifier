@@ -21,7 +21,7 @@ if __name__ == '__main__':
                         ' channels a user follows', action='store_true')
     parser.add_argument('-v', '--verbose', help='Enable verbose output',
                         action='store_true')
-    parser.add_argument('-u', '--user', help='Check status of only one user',
+    parser.add_argument('-u', '--user', help='Check status of user(,user)',
                         type=str)
     parser.add_argument('-t', '--token', help='Tokens are not needed anymore. '
                         'Option is left here for compability', type=str)
