@@ -30,7 +30,7 @@ class Settings(object):
     list_entry_off = '$1'
 
     log_fmt = '(${%d %H:%M:%S}) $1 is $2'
-    log_fmt_off = '$(${%d %H:%M:%S}) $1 is $2'
+    log_fmt_off = '(${%d %H:%M:%S}) $1 is $2'
 
     def __init__(self, cfg):
         '''
