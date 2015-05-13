@@ -79,9 +79,8 @@ class Settings(object):
             self.log_fmt = opt.get('log_fmt', self.log_fmt, raw=True)
             self.log_fmt_off = opt.get('log_fmt_off', self.log_fmt_off,
                                        raw=True)
-
         except:
-            print('No messages key exists in ' + self.cfg, file=sys.stderr)
+            print('Wrong or missing options in ' + self.cfg, file=sys.stderr)
 
 
 class NotifyApi(object):
