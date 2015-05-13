@@ -15,8 +15,7 @@ class Settings(object):
     '''
     A simple wrapper around configparser to read configuration
     '''
-    directory = ''
-    cfg = 'twitchnotifier.cfg'
+    cfg = ''
     section = 'messages'
 
     user_message = '$1 is $2'
@@ -33,19 +32,19 @@ class Settings(object):
     log_fmt = '(${%d %H:%M:%S}) $1 is $2'
     log_fmt_off = '$(${%d %H:%M:%S}) $1 is $2'
 
-    def __init__(self, directory):
+    def __init__(self, cfg):
         '''
         Initialize the object and read the file to get the info
 
         Positional arguments:
         directory - where the configuration file is stored
         '''
-        if not isinstance(directory, str):
+        if not isinstance(cfg, str):
             raise TypeError('Wrong type passed to Settings')
-        if not directory.strip():
-            raise ValueError('Empty directory passed to Settings')
+        if not cfg.strip():
+            raise ValueError('Empty string passed to Settings')
 
-        self.directory = directory
+        self.cfg = cfg
         self.conf = configparser.ConfigParser()
         self.read_file()
 
@@ -53,7 +52,7 @@ class Settings(object):
         '''
         Read the file and get needed sections/info
         '''
-        self.conf.read(self.directory + '/' + self.cfg)
+        self.conf.read(self.cfg)
         try:
             opt = self.conf[self.section]
             self.user_message = opt.get('user_message', self.user_message,

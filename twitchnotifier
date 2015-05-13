@@ -27,17 +27,26 @@ if __name__ == '__main__':
                         'Option is left here for compability', type=str)
     parser.add_argument('-l', '--logfile', help='File used for logging events '
                         'in -c/--nick mode', type=str)
+    parser.add_argument('-g', '--config', help='Path to configuration file',
+                        type=str)
+
     args = parser.parse_args()
     if not args.nick and not args.user:
         print('You have to pass atleast either -c/--nick or '
               '-u/--user to TwitchNotifier!')
         sys.exit(1)
-    config_dir = os.environ.get('XDG_CONFIG_HOME',
-                                os.environ.get('HOME', '') + '/.config')
-    if args.verbose:
-        print('Configuration directory:', config_dir)
 
-    fmt = library.Settings(config_dir)
+    config_file = os.environ.get('XDG_CONFIG_HOME',
+                                 os.environ.get('HOME', '') + '/.config')
+    config_file += '/twitchnotifier.cfg'
+
+    if args.config:
+        config_file = args.config
+
+    if args.verbose:
+        print('Configuration file:', config_file)
+
+    fmt = library.Settings(config_file)
     api = library.NotifyApi(args.nick, fmt, args.logfile, args.verbose)
     signal.signal(signal.SIGHUP, handler)
 
