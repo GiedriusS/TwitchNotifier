@@ -8,6 +8,13 @@ import os
 
 
 def handler(signum, frame):
+    '''
+    A signal handler that makes TN reread the cfg file
+
+    Parameters:
+    signum - signal number
+    frame - current stack frame
+    '''
     api.fmt.read_file()
 
 if __name__ == '__main__':
