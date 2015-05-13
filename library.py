@@ -361,7 +361,7 @@ class NotifyApi(object):
         return ret
 
 if __name__ == '__main__':
-    st = Settings('/home/giedrius/.config')
+    st = Settings('/home/giedrius/.config/twitchnotifier.cfg')
 
     core = NotifyApi('Xangold', st, '/home/giedrius/log', True)
     list_of_chans = core.get_followed_channels()
