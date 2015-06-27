@@ -219,7 +219,7 @@ class NotifyApi(object):
         Raises:
         RuntimeError - failed to show the notification
         '''
-        n = Notify.Notification.new(title, message, 'dialog-information')
+        n = Notify.Notification.new(title, message)
 
         if not n.show():
             raise RuntimeError('Failed to show a notification')
