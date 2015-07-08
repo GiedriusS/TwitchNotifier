@@ -170,6 +170,13 @@ class NotifyApi(object):
 
         Returns a tuple of format (formatted_msg, status)
         '''
+
+        if not chan.strip():
+            if self.verbose:
+                print('channel passed to check_if_online is empty',
+                      file=sys.stderr)
+            return ('', None)
+
         url = base_url + '/streams/' + chan
 
         try:
