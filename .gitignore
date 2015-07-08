@@ -1,0 +1,5 @@
+__pycache__
+archlinux/pkg
+archlinux/src
+archlinux/TwitchNotifier
+archlinux/*.tar.xz
