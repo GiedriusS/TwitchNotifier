@@ -7,7 +7,7 @@ import signal
 import os
 
 
-def handler(signum, frame):
+def cb_sighup(signum, frame):
     '''
     A signal handler that makes TN reread the cfg file
 
@@ -55,7 +55,7 @@ if __name__ == '__main__':
 
     FMT = library.Settings(CONFIG_FILE)
     API = library.NotifyApi(ARGS.nick, FMT, ARGS.logfile, ARGS.verbose)
-    signal.signal(signal.SIGHUP, handler)
+    signal.signal(signal.SIGHUP, cb_sighup)
 
     if ARGS.user:
         for user in ARGS.user.split(','):
