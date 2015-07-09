@@ -15,83 +15,83 @@ def handler(signum, frame):
     signum - signal number
     frame - current stack frame
     '''
-    api.fmt.read_file()
+    API.fmt.read_file()
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-c', '--nick', help='Twitch nickname', default='')
-    parser.add_argument('-i', '--interval', help='Interval between checks '
+    PARSER = argparse.ArgumentParser()
+    PARSER.add_argument('-c', '--nick', help='Twitch nickname', default='')
+    PARSER.add_argument('-i', '--interval', help='Interval between checks '
                         'in seconds. Default: 120', type=int, default=120)
-    parser.add_argument('-n', '--online', help='Only check for online channels'
+    PARSER.add_argument('-n', '--online', help='Only check for online channels'
                         ' a user follows', action='store_true')
-    parser.add_argument('-f', '--offline', help='Only check for offline'
+    PARSER.add_argument('-f', '--offline', help='Only check for offline'
                         ' channels a user follows', action='store_true')
-    parser.add_argument('-v', '--verbose', help='Enable verbose output',
+    PARSER.add_argument('-v', '--verbose', help='Enable verbose output',
                         action='store_true')
-    parser.add_argument('-u', '--user', help='Check status of user(,user)',
+    PARSER.add_argument('-u', '--user', help='Check status of user(,user)',
                         type=str)
-    parser.add_argument('-t', '--token', help='Tokens are not needed anymore. '
+    PARSER.add_argument('-t', '--token', help='Tokens are not needed anymore. '
                         'Option is left here for compability', type=str)
-    parser.add_argument('-l', '--logfile', help='File used for logging events '
+    PARSER.add_argument('-l', '--logfile', help='File used for logging events '
                         'in -c/--nick mode', type=str)
-    parser.add_argument('-g', '--config', help='Path to configuration file',
+    PARSER.add_argument('-g', '--config', help='Path to configuration file',
                         type=str)
 
-    args = parser.parse_args()
-    if not args.nick and not args.user:
+    ARGS = PARSER.parse_args()
+    if not ARGS.nick and not ARGS.user:
         print('You have to pass atleast either -c/--nick or '
               '-u/--user to TwitchNotifier!')
         sys.exit(1)
 
-    config_file = os.environ.get('XDG_CONFIG_HOME',
+    CONFIG_FILE = os.environ.get('XDG_CONFIG_HOME',
                                  os.environ.get('HOME', '') + '/.config')
-    config_file += '/twitchnotifier.cfg'
+    CONFIG_FILE += '/twitchnotifier.cfg'
 
-    if args.config:
-        config_file = args.config
+    if ARGS.config:
+        CONFIG_FILE = ARGS.config
 
-    if args.verbose:
-        print('Configuration file:', config_file)
+    if ARGS.verbose:
+        print('Configuration file:', CONFIG_FILE)
 
-    fmt = library.Settings(config_file)
-    api = library.NotifyApi(args.nick, fmt, args.logfile, args.verbose)
+    FMT = library.Settings(CONFIG_FILE)
+    API = library.NotifyApi(ARGS.nick, FMT, ARGS.logfile, ARGS.verbose)
     signal.signal(signal.SIGHUP, handler)
 
-    if args.user:
-        for user in args.user.split(','):
-            msg, status = api.check_if_online(user)
+    if ARGS.user:
+        for user in ARGS.user.split(','):
+            msg, status = API.check_if_online(user)
             if status is None:
                 print('Error getting information about', user)
             else:
                 print(msg)
 
-        del api
+        del API
         if status is None:
             sys.exit(1)
         sys.exit()
 
-    new = api.get_status()
+    NEW = API.get_status()
 
-    if args.online:
-        for chan in new:
+    if ARGS.online:
+        for chan in NEW:
             if chan[1]:
-                print(api.repl(chan[2], chan[0], api.fmt.list_entry))
-        del api
+                print(API.repl(chan[2], chan[0], API.fmt.list_entry))
+        del API
         sys.exit()
 
-    if args.offline:
-        for chan in new:
+    if ARGS.offline:
+        for chan in NEW:
             if not chan[1] is None and not chan[1]:
-                print(api.repl(chan[2], chan[0], api.fmt.list_entry_off))
-        del api
+                print(API.repl(chan[2], chan[0], API.fmt.list_entry_off))
+        del API
         sys.exit()
 
-    old = None
+    OLD = None
 
     while True:
-        if old and new:
-            api.diff(new, old)
+        if OLD and NEW:
+            API.diff(NEW, OLD)
 
-        time.sleep(args.interval)
-        old = new
-        new = api.get_status()
+        time.sleep(ARGS.interval)
+        OLD = NEW
+        NEW = API.get_status()
