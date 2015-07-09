@@ -5,10 +5,10 @@ import requests
 import sys
 from gi.repository import Notify
 
-base_url = 'https://api.twitch.tv/kraken/'
-client_id = 'pvv7ytxj4v7i10h0p3s7ewf4vpoz5fc'
-head = {'Accept': 'application/vnd.twitch.v3+json',
-        'Client-ID': client_id}
+BASE_URL = 'https://api.twitch.tv/kraken/'
+CLIENT_ID = 'pvv7ytxj4v7i10h0p3s7ewf4vpoz5fc'
+HEAD = {'Accept': 'application/vnd.twitch.v3+json',
+        'Client-ID': CLIENT_ID}
 
 
 class Settings(object):
@@ -125,13 +125,13 @@ class NotifyApi(object):
         Returns a list of channels that user follows
         '''
         ret = []
-        url = base_url + '/users/' + self.nick + '/follows/channels'
+        url = BASE_URL + '/users/' + self.nick + '/follows/channels'
 
         if payload is None:
             payload = {}
 
         try:
-            r = requests.get(url, headers=head, params=payload)
+            r = requests.get(url, headers=HEAD, params=payload)
         except Exception as e:
             print('Exception in get_followed_channels::requests.get()',
                   '__doc__ = ' + str(e.__doc__), file=sys.stderr, sep='\n')
@@ -180,10 +180,10 @@ class NotifyApi(object):
                       file=sys.stderr)
             return ('', None)
 
-        url = base_url + '/streams/' + chan
+        url = BASE_URL + '/streams/' + chan
 
         try:
-            r = requests.get(url, headers=head)
+            r = requests.get(url, headers=HEAD)
         except Exception as e:
             print('Exception in check_if_online::requests.get()',
                   '__doc__ = ' + str(e.__doc__), file=sys.stderr, sep='\n')
@@ -254,10 +254,10 @@ class NotifyApi(object):
 
             offset = offset + limit
 
-        url = base_url + 'streams?channel=' + ','.join(elem[0] for elem in ret)
+        url = BASE_URL + 'streams?channel=' + ','.join(elem[0] for elem in ret)
 
         try:
-            r = requests.get(url, headers=head)
+            r = requests.get(url, headers=HEAD)
         except Exception as e:
             print('Exception in get_status::requests.get()',
                   '__doc__ = ' + str(e.__doc__), file=sys.stderr, sep='\n')
@@ -378,12 +378,12 @@ class NotifyApi(object):
         return ret
 
 if __name__ == '__main__':
-    st = Settings('/home/giedrius/.config/twitchnotifier.cfg')
+    ST = Settings('/home/giedrius/.config/twitchnotifier.cfg')
 
-    core = NotifyApi('Xangold', st, '/home/giedrius/log', True)
-    list_of_chans = core.get_followed_channels()
-    print(list_of_chans, len(list_of_chans))
-    stat = core.get_status()
-    print(core.check_if_online('nadeshot'))
-    print(stat)
-    core.show_notification('Hello', 'From TwitchNotifier')
+    CORE = NotifyApi('Xangold', ST, '/home/giedrius/log', True)
+    LIST_OF_CHANS = CORE.get_followed_channels()
+    print(LIST_OF_CHANS, len(LIST_OF_CHANS))
+    STAT = CORE.get_status()
+    print(CORE.check_if_online('nadeshot'))
+    print(STAT)
+    CORE.show_notification('Hello', 'From TwitchNotifier')
