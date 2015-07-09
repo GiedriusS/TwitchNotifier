@@ -65,7 +65,7 @@ if __name__ == '__main__':
             else:
                 print(msg)
 
-        del(api)
+        del api
         if status is None:
             sys.exit(1)
         sys.exit()
@@ -76,14 +76,14 @@ if __name__ == '__main__':
         for chan in new:
             if chan[1]:
                 print(api.repl(chan[2], chan[0], api.fmt.list_entry))
-        del(api)
+        del api
         sys.exit()
 
     if args.offline:
         for chan in new:
             if not chan[1] is None and not chan[1]:
                 print(api.repl(chan[2], chan[0], api.fmt.list_entry_off))
-        del(api)
+        del api
         sys.exit()
 
     old = None
