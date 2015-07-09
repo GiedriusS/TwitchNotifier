@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+'''
+The module that does everything according to what the user wants
+'''
 import library
 import argparse
 import time
