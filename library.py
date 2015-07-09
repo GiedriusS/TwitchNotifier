@@ -323,6 +323,14 @@ class NotifyApi(object):
             i = i + 1
 
     def log(self, stream, chan, msg):
+        '''
+        Write formatted msg to self.fl if it's open
+
+        Positional arguments:
+        stream - stream object
+        chan - channel name
+        msg - a format string
+        '''
         if self.fl is None:
             return
         self.fl.write(self.repl(stream, chan, msg) + '\n')
