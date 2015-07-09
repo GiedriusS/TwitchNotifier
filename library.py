@@ -112,7 +112,7 @@ class NotifyApi(object):
         if not Notify.init('TwitchNotifier'):
             raise RuntimeError('Failed to init libnotify')
 
-    def get_followed_channels(self, payload={}):
+    def get_followed_channels(self, payload=None):
         '''
         Get a list of channels the user is following
 
@@ -126,6 +126,9 @@ class NotifyApi(object):
         '''
         ret = []
         url = base_url + '/users/' + self.nick + '/follows/channels'
+
+        if payload is None:
+            payload = {}
 
         try:
             r = requests.get(url, headers=head, params=payload)
