@@ -1,3 +1,6 @@
+'''
+A python module that setups the program for distribution
+'''
 from distutils.core import setup
 
 setup(name='TwitchNotifier',
@@ -9,4 +12,4 @@ setup(name='TwitchNotifier',
       url='https://github.com/GiedriusS/TwitchNotifier',
       scripts=['twitchnotifier'],
       py_modules=['library'],
-      )
+     )
