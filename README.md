@@ -52,3 +52,6 @@ You don't have to reload twitchnotifier to use new configuration! Send SIGHUP to
 | -c/--nick      | Watch NICK followed channels                                     |
 | -l/--logfile   | Also put new events to log file                                  |
 | -g/--config    | Full path to a configuration file (overrides the defaults)       |
+
+# Contributing
+Please make sure your patches don't introduce any new pylint or flake8 messages before sending a PR. Thanks
