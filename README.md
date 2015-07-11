@@ -8,6 +8,7 @@ Uses twitch v3 api.
 # Message configuration
 Now you can configure the message format TwitchNotifier uses! Create a file called "twitchnotifier.cfg" in $XDG\_CONFIG\_HOME (or $HOME/.config, or /.config). It's possible to override which file twitchnotifier uses via the -g/--config option.
 You can look at twitchnotifier.cfg for an example. There has to be a section called "messages" with "user\_message", "list\_entry", "notification\_title" and "notification\_content" (and with \_off suffix). Explanations of each key:
+It is also possible to override the settings with environment variables. The environment variable names are the same as the key names in the configuration file.
 
 | Key                              | Explanation                                                     | 
 | -------------------------------- | --------------------------------------------------------------- |

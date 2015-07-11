@@ -3,6 +3,7 @@ import time
 import re
 import requests
 import sys
+import os
 from gi.repository import Notify
 
 BASE_URL = 'https://api.twitch.tv/kraken/'
@@ -47,6 +48,23 @@ class Settings(object):
         self.cfg = cfg
         self.conf = configparser.ConfigParser()
         self.read_file()
+
+        # Environment variables can override settings
+        self.user_message = os.getenv('user_message', self.user_message)
+        self.user_message_off = os.getenv('user_message_off',
+                                          self.user_message_off)
+        self.notification_title = os.getenv('notification_title',
+                                            self.notification_title)
+        self.notification_cont = os.getenv('notification_cont',
+                                           self.notification_cont)
+        self.list_entry = os.getenv('list_entry', self.list_entry)
+        self.log_fmt = os.getenv('log_fmt', self.log_fmt)
+        self.notification_title_off = os.getenv('notification_title_off',
+                                                self.notification_title_off)
+        self.notification_cont_off = os.getenv('notification_cont_off',
+                                               self.notification_cont_off)
+        self.list_entry_off = os.getenv('list_entry_off', self.list_entry_off)
+        self.log_fmt_off = os.getenv('log_fmt_off', self.log_fmt_off)
 
     def read_file(self):
         '''
