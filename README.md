@@ -22,6 +22,8 @@ You can look at twitchnotifier.cfg for an example. There has to be a section cal
 | $5                               | (Only if online) Status or IOW text above the player            |
 | $6                               | (Only if online) Language                                       |
 | $7                               | (Only if online) Average FPS                                    |
+| $8                               | (Only if online) Followers                                      |
+| $9                               | (Only if online) Views                                          |
 | ${foo}                           | Replaced as if strftime is applied on foo                       |
 
 You don't have to reload twitchnotifier to use new configuration! Send SIGHUP to the TwitchNotifier process to make it reload the configuration. For example: `killall -s HUP twitchnotifier`.

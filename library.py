@@ -370,6 +370,8 @@ class NotifyApi(object):
         $5 - status
         $6 - language
         $7 - average FPS
+        $8 - followers
+        $9 - views
         ${} - everything between {} will be replaced as if strftime is applied
 
         Positional arguments:
@@ -392,6 +394,10 @@ class NotifyApi(object):
             ret = ret.replace('$6', stream.get('channel', {}).get('language',
                                                                   ''))
             ret = ret.replace('$7', str(stream.get('average_fps')))
+            ret = ret.replace('$8', stream.get('channel', {}).get('followers',
+                                                                  ''))
+            ret = ret.replace('$9', stream.get('channel', {}).get('views',
+                                                                  ''))
 
         return ret
 
