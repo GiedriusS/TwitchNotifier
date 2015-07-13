@@ -38,7 +38,7 @@ class Settings(object):
         Initialize the object and read the file to get the info
 
         Positional arguments:
-        directory - where the configuration file is stored
+        cfg - full path to the configuration file
         '''
         if not isinstance(cfg, str):
             raise TypeError('Wrong type passed to Settings')
