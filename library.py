@@ -130,7 +130,7 @@ class NotifyApi(object):
         self.verbose = verbose
         self.fmt = fmt
         if logfile is not None:
-            self.hand = open(logfile, 'a')
+            self.fhand = open(logfile, 'a')
 
         if not Notify.init('TwitchNotifier'):
             raise RuntimeError('Failed to init libnotify')
@@ -183,8 +183,8 @@ class NotifyApi(object):
     def __del__(self):
         '''Uninit libnotify object'''
         Notify.uninit()
-        if self.hand is not None:
-            self.hand.close()
+        if self.fhand is not None:
+            self.fhand.close()
 
     def check_if_online(self, chan):
         '''
@@ -357,10 +357,10 @@ class NotifyApi(object):
         chan - channel name
         msg - a format string
         '''
-        if self.hand is None:
+        if self.fhand is None:
             return
-        self.hand.write(self.repl(stream, chan, msg) + '\n')
-        self.hand.flush()
+        self.fhand.write(self.repl(stream, chan, msg) + '\n')
+        self.fhand.flush()
 
     def repl(self, stream, chan, msg):
         '''
