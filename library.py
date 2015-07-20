@@ -112,7 +112,7 @@ class NotifyApi(object):
     '''
     nick = ''
     verbose = False
-    fl = None
+    fhand = None
 
     def __init__(self, nick, fmt, logfile, verbose=False):
         '''
@@ -130,7 +130,7 @@ class NotifyApi(object):
         self.verbose = verbose
         self.fmt = fmt
         if logfile is not None:
-            self.fl = open(logfile, 'a')
+            self.hand = open(logfile, 'a')
 
         if not Notify.init('TwitchNotifier'):
             raise RuntimeError('Failed to init libnotify')
@@ -154,20 +154,20 @@ class NotifyApi(object):
             payload = {}
 
         try:
-            r = requests.get(url, headers=HEAD, params=payload)
-        except Exception as e:
+            req = requests.get(url, headers=HEAD, params=payload)
+        except Exception as ex:
             print('Exception in get_followed_channels::requests.get()',
-                  '__doc__ = ' + str(e.__doc__), file=sys.stderr, sep='\n')
+                  '__doc__ = ' + str(ex.__doc__), file=sys.stderr, sep='\n')
             return ret
 
         try:
-            json = r.json()
+            json = req.json()
         except ValueError:
             print('Failed to parse json in get_followed_channels()',
                   file=sys.stderr)
             if self.verbose:
-                print('r.text: ' + r.text, 'r.status_code: ' +
-                      str(r.status_code), 'r.headers: ' + str(r.headers),
+                print('req.text: ' + req.text, 'req.status_code: ' +
+                      str(req.status_code), 'req.headers: ' + str(req.headers),
                       file=sys.stderr, sep='\n')
             return ret
 
@@ -183,8 +183,8 @@ class NotifyApi(object):
     def __del__(self):
         '''Uninit libnotify object'''
         Notify.uninit()
-        if self.fl is not None:
-            self.fl.close()
+        if self.hand is not None:
+            self.hand.close()
 
     def check_if_online(self, chan):
         '''
@@ -206,20 +206,20 @@ class NotifyApi(object):
         url = BASE_URL + '/streams/' + chan
 
         try:
-            r = requests.get(url, headers=HEAD)
-        except Exception as e:
+            req = requests.get(url, headers=HEAD)
+        except Exception as ex:
             print('Exception in check_if_online::requests.get()',
-                  '__doc__ = ' + str(e.__doc__), file=sys.stderr, sep='\n')
+                  '__doc__ = ' + str(ex.__doc__), file=sys.stderr, sep='\n')
             return ('', None)
 
         try:
-            json = r.json()
+            json = req.json()
         except ValueError:
             print('Failed to parse json in check_if_online',
                   file=sys.stderr)
             if self.verbose:
-                print('r.text: ' + r.text, 'r.status_code: ' +
-                      str(r.status_code), 'r.headers: ' + str(r.headers),
+                print('req.text: ' + req.text, 'req.status_code: ' +
+                      str(req.status_code), 'req.headers: ' + str(req.headers),
                       file=sys.stderr, sep='\n')
             return ('', None)
 
@@ -227,8 +227,8 @@ class NotifyApi(object):
             print('Error in returned json object in check_if_online',
                   file=sys.stderr)
             if self.verbose:
-                print('r.text: ' + r.text, 'r.status_code: ' +
-                      str(r.status_code), 'r.headers: ' + str(r.headers),
+                print('req.text: ' + req.text, 'req.status_code: ' +
+                      str(req.status_code), 'req.headers: ' + str(req.headers),
                       file=sys.stderr, sep='\n')
             return ('', None)
 
@@ -252,9 +252,9 @@ class NotifyApi(object):
         Raises:
         RuntimeError - failed to show the notification
         '''
-        n = Notify.Notification.new(title, message)
+        notif = Notify.Notification.new(title, message)
 
-        if not n.show():
+        if not notif.show():
             raise RuntimeError('Failed to show a notification')
 
     def get_status(self):
@@ -280,31 +280,31 @@ class NotifyApi(object):
         url = BASE_URL + 'streams?channel=' + ','.join(elem[0] for elem in ret)
 
         try:
-            r = requests.get(url, headers=HEAD)
-        except Exception as e:
+            req = requests.get(url, headers=HEAD)
+        except Exception as ex:
             print('Exception in get_status::requests.get()',
-                  '__doc__ = ' + str(e.__doc__), file=sys.stderr, sep='\n')
+                  '__doc__ = ' + str(ex.__doc__), file=sys.stderr, sep='\n')
             return ret
 
         try:
-            json = r.json()
+            json = req.json()
         except ValueError:
             print('Failed to parse json in get_status',
                   file=sys.stderr)
             return ret
 
         if 'streams' in json:
-            for el in ret:
+            for elem in ret:
                 for stream in json['streams']:
-                    if stream['channel']['name'] == el[0]:
-                        el[1] = True
-                        el[2] = stream
+                    if stream['channel']['name'] == elem[0]:
+                        elem[1] = True
+                        elem[2] = stream
 
         # Turn all None channels into False
         # Because we have already passed the part with exceptions
-        for el in ret:
-            if el[1] is None:
-                el[1] = False
+        for elem in ret:
+            if elem[1] is None:
+                elem[1] = False
 
         return ret
 
@@ -357,10 +357,10 @@ class NotifyApi(object):
         chan - channel name
         msg - a format string
         '''
-        if self.fl is None:
+        if self.hand is None:
             return
-        self.fl.write(self.repl(stream, chan, msg) + '\n')
-        self.fl.flush()
+        self.hand.write(self.repl(stream, chan, msg) + '\n')
+        self.hand.flush()
 
     def repl(self, stream, chan, msg):
         '''
