@@ -1,3 +1,6 @@
+'''
+TwitchTV and config reading abstractions for TN
+'''
 import configparser
 import time
 import re
