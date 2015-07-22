@@ -139,8 +139,7 @@ class NotifyApi(object):
                 Notify.init('TwitchNotifier')
                 self.ninited = True
             except:
-                print('Failed to init Notify',
-                      file=sys.stderr)
+                print('Failed to init Notify', file=sys.stderr)
 
     def notify_uninit(self):
         if self.ninited is True:
