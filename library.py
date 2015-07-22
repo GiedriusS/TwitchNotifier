@@ -113,6 +113,7 @@ class NotifyApi(object):
     nick = ''
     verbose = False
     fhand = None
+    ninited = False
 
     def __init__(self, nick, fmt, logfile, verbose=False):
         '''
@@ -132,8 +133,19 @@ class NotifyApi(object):
         if logfile is not None:
             self.fhand = open(logfile, 'a')
 
-        if not Notify.init('TwitchNotifier'):
-            raise RuntimeError('Failed to init libnotify')
+    def notify_init(self):
+        if self.ninited is False:
+            try:
+                Notify.init('TwitchNotifier')
+                self.ninited = True
+            except:
+                print('Failed to init Notify',
+                      file=sys.stderr)
+
+    def notify_uninit(self):
+        if self.ninited is True:
+            Notify.uninit()
+            self.ninited = False
 
     def get_followed_channels(self, payload=None):
         '''
@@ -181,8 +193,8 @@ class NotifyApi(object):
         return ret
 
     def __del__(self):
-        '''Uninit libnotify object'''
-        Notify.uninit()
+        '''Clean up everything'''
+        self.notify_uninit()
         if self.fhand is not None:
             self.fhand.close()
 
@@ -251,7 +263,17 @@ class NotifyApi(object):
 
         Raises:
         RuntimeError - failed to show the notification
+
+        Note:
+        if you are calling .show_notification() by itself then you need make
+        sure that you call .notify_uninit() after one or more calls of this method
         '''
+        if self.ninited is False:
+            self.notify_init()
+
+        if self.ninited is False:
+            raise RuntimeError('Failed to init notify')
+
         notif = Notify.Notification.new(title, message)
 
         if not notif.show():
@@ -317,6 +339,7 @@ class NotifyApi(object):
         old - older list returned from get_status()
         '''
         i = 0
+        self.notify_init()
         while i < len(new) and i < len(old):
             if (not new[i][1] is None and not old[i][1] is None and
                     new[i][0] == old[i][0]):
@@ -327,6 +350,10 @@ class NotifyApi(object):
                     message = self.repl(new[i][2], new[i][0],
                                         self.fmt.notification_cont)
                     self.log(new[i][2], new[i][0], self.fmt.log_fmt)
+                    if self.ninited is False:
+                        print(new[i][0] + ' is online')
+                        continue
+
                     try:
                         self.show_notification(title, message)
                     except RuntimeError:
@@ -340,6 +367,10 @@ class NotifyApi(object):
                     message = self.repl(new[i][2], new[i][0],
                                         self.fmt.notification_cont_off)
                     self.log(new[i][2], new[i][0], self.fmt.log_fmt_off)
+                    if self.ninited is False:
+                        print(new[i][0] + ' is offline')
+                        continue
+
                     try:
                         self.show_notification(title, message)
                     except RuntimeError:
@@ -347,6 +378,7 @@ class NotifyApi(object):
                               file=sys.stderr)
                         print(new[i][0] + ' is offline')
             i = i + 1
+        self.notify_uninit()
 
     def log(self, stream, chan, msg):
         '''
@@ -416,3 +448,4 @@ if __name__ == '__main__':
     print(CORE.check_if_online('nadeshot'))
     print(STAT)
     CORE.show_notification('Hello', 'From TwitchNotifier')
+    CORE.notify_uninit()
