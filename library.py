@@ -134,6 +134,9 @@ class NotifyApi(object):
             self.fhand = open(logfile, 'a')
 
     def notify_init(self):
+        '''
+        Init notify daemon via Notify if it's not inited already
+        '''
         if self.ninited is False:
             try:
                 Notify.init('TwitchNotifier')
@@ -142,6 +145,9 @@ class NotifyApi(object):
                 print('Failed to init Notify', file=sys.stderr)
 
     def notify_uninit(self):
+        '''
+        Uninit notify daemon via Notify if it is inited
+        '''
         if self.ninited is True:
             Notify.uninit()
             self.ninited = False
