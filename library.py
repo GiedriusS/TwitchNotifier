@@ -213,6 +213,10 @@ class NotifyApi(object):
                   '__doc__ = ' + str(ex.__doc__), file=sys.stderr, sep='\n')
             return None
 
+        if req.status_code == requests.codes.bad:
+            print('Kraken request returned bad code, bailing', file=sys.stderr)
+            return None
+
         try:
             json = req.json()
         except ValueError:
