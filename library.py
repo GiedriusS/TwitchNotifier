@@ -209,14 +209,14 @@ class NotifyApi(object):
         try:
             req = requests.get(url, headers=HEAD, params=payload)
         except Exception as ex:
-            print('Exception in get_stream_objects::requests.get()',
+            print('Exception in access_kraken::requests.get()',
                   '__doc__ = ' + str(ex.__doc__), file=sys.stderr, sep='\n')
             return None
 
         try:
             json = req.json()
         except ValueError:
-            print('Failed to parse json in get_stream_objects',
+            print('Failed to parse json in access_kraken',
                   file=sys.stderr)
             if self.verbose:
                 print('req.text: ' + req.text, 'req.status_code: ' +
