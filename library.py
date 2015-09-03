@@ -172,7 +172,7 @@ class NotifyApi(object):
 
         json = self.access_kraken(cmd, payload)
         if json is None:
-                return ret
+            return ret
 
         if 'status' in json and json['status'] == 404:
             raise NameError(self.nick + ' is a invalid nickname!')
@@ -253,16 +253,17 @@ class NotifyApi(object):
                 break
 
             for stream in resp['streams']:
-                ret.append((stream['channel']['name'], True, self.repl(stream,
-                            stream['channel']['name'], self.fmt.user_message)))
+                ret.append((stream['channel']['name'], True,
+                            self.repl(stream, stream['channel']['name'],
+                                      self.fmt.user_message)))
             offset = offset + limit
             cont = len(resp['streams']) > 0
 
         names = [a[0] for a in ret]
-        for ch in chan:
-            if ch not in names and len(str.strip(ch)) > 0:
-                ret.append((ch, False, self.repl(None, ch,
-                                                 self.fmt.user_message_off)))
+        for elem in chan:
+            if elem not in names and len(str.strip(elem)) > 0:
+                ret.append((elem, False, self.repl(None, elem,
+                                                   self.fmt.user_message_off)))
         return ret
 
     def show_notification(self, title, message):
