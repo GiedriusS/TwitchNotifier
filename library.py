@@ -203,60 +203,79 @@ class NotifyApi(object):
         if self.fhand is not None:
             self.fhand.close()
 
-    def check_if_online(self, chan):
+    def get_stream_objects(self, payload=None):
         '''
-        Gets a stream object and returns a tuple in format of
-        (formatted_msg, status)
+        Get stream objects
 
         Positional arguments:
-        chan - channel name
+        payload - arguments to send over the request
 
-        Returns a tuple of format (formatted_msg, status)
+        Returns:
+        None - error occured
+        Otherwise, json response
         '''
+        url = BASE_URL + '/streams'
 
-        if not chan.strip():
-            if self.verbose:
-                print('channel passed to check_if_online is empty',
-                      file=sys.stderr)
-            return ('', None)
-
-        url = BASE_URL + '/streams/' + chan
+        if payload is None:
+            payload = {}
 
         try:
-            req = requests.get(url, headers=HEAD)
+            req = requests.get(url, headers=HEAD, params=payload)
         except Exception as ex:
-            print('Exception in check_if_online::requests.get()',
+            print('Exception in get_stream_objects::requests.get()',
                   '__doc__ = ' + str(ex.__doc__), file=sys.stderr, sep='\n')
-            return ('', None)
+            return None
 
         try:
             json = req.json()
         except ValueError:
-            print('Failed to parse json in check_if_online',
+            print('Failed to parse json in get_stream_objects',
                   file=sys.stderr)
             if self.verbose:
                 print('req.text: ' + req.text, 'req.status_code: ' +
                       str(req.status_code), 'req.headers: ' + str(req.headers),
                       file=sys.stderr, sep='\n')
-            return ('', None)
+            return None
+        return json
 
-        if 'error' in json:
-            print('Error in returned json object in check_if_online',
-                  file=sys.stderr)
+    def check_if_online(self, chan):
+        '''
+        Gets a list of tuples in format of (channel, status, formatted_msg)
+
+        Positional arguments:
+        chan - list of channel names
+
+        Returns a list of tuples of format (channel, status, formatted_msg)
+        '''
+        ret = []
+
+        if len(chan) == 0:
             if self.verbose:
-                print('req.text: ' + req.text, 'req.status_code: ' +
-                      str(req.status_code), 'req.headers: ' + str(req.headers),
-                      file=sys.stderr, sep='\n')
-            return ('', None)
+                print('channel passed to check_if_online is empty',
+                      file=sys.stderr)
+            return ret
 
-        online = False if 'stream' in json and json['stream'] is None else True
+        offset = 0
+        limit = 100
+        cont = True
+        while cont:
+            url = BASE_URL + '/streams'
+            payload = {'channel': ','.join(chan), 'limit': limit,
+                       'offset': offset}
+            resp = self.get_stream_objects(payload)
+            if resp is None:
+                break
 
-        if online:
-            return (self.repl(json['stream'], chan, self.fmt.user_message),
-                    online)
-        else:
-            return (self.repl(json['stream'], chan, self.fmt.user_message_off),
-                    online)
+            for stream in resp['streams']:
+                ret.append((stream['channel']['name'], True, self.repl(stream, stream['channel']['name'], self.fmt.user_message)))
+            offset = offset + limit
+            cont = len(resp['streams']) > 0
+
+        names = [a[0] for a in ret]
+        for ch in chan:
+            if ch not in names and len(str.strip(ch)) > 0:
+                ret.append((ch, False, self.repl(None, ch, self.fmt.user_message_off)))
+        return ret
 
     def show_notification(self, title, message):
         '''
