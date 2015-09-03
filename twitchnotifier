@@ -61,12 +61,12 @@ if __name__ == '__main__':
     signal.signal(signal.SIGHUP, cb_sighup)
 
     if ARGS.user:
-        lst = ARGS.user.split(',')
-        ret = API.check_if_online(lst)
-        if len(ret) == 0:
-                del API
-                sys.exit(1)
-        for el in ret:
+        LST = ARGS.user.split(',')
+        RET = API.check_if_online(LST)
+        if len(RET) == 0:
+            del API
+            sys.exit(1)
+        for el in RET:
             print(el[2])
         del API
         sys.exit()
