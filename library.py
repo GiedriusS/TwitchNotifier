@@ -165,28 +165,14 @@ class NotifyApi(object):
         Returns a list of channels that user follows
         '''
         ret = []
-        url = BASE_URL + '/users/' + self.nick + '/follows/channels'
+        cmd = '/users/' + self.nick + '/follows/channels'
 
         if payload is None:
             payload = {}
 
-        try:
-            req = requests.get(url, headers=HEAD, params=payload)
-        except Exception as ex:
-            print('Exception in get_followed_channels::requests.get()',
-                  '__doc__ = ' + str(ex.__doc__), file=sys.stderr, sep='\n')
-            return ret
-
-        try:
-            json = req.json()
-        except ValueError:
-            print('Failed to parse json in get_followed_channels()',
-                  file=sys.stderr)
-            if self.verbose:
-                print('req.text: ' + req.text, 'req.status_code: ' +
-                      str(req.status_code), 'req.headers: ' + str(req.headers),
-                      file=sys.stderr, sep='\n')
-            return ret
+        json = self.access_kraken(cmd, payload)
+        if json is None:
+                return ret
 
         if 'status' in json and json['status'] == 404:
             raise NameError(self.nick + ' is a invalid nickname!')
@@ -203,18 +189,19 @@ class NotifyApi(object):
         if self.fhand is not None:
             self.fhand.close()
 
-    def get_stream_objects(self, payload=None):
+    def access_kraken(self, cmd, payload=None):
         '''
-        Get stream objects
+        Generic wrapper around kraken calls
 
         Positional arguments:
+        cmd - command such as '/streams'
         payload - arguments to send over the request
 
         Returns:
         None - error occured
         Otherwise, json response
         '''
-        url = BASE_URL + '/streams'
+        url = BASE_URL + cmd
 
         if payload is None:
             payload = {}
@@ -262,7 +249,7 @@ class NotifyApi(object):
             url = BASE_URL + '/streams'
             payload = {'channel': ','.join(chan), 'limit': limit,
                        'offset': offset}
-            resp = self.get_stream_objects(payload)
+            resp = self.access_kraken('/streams', payload)
             if resp is None:
                 break
 
@@ -323,21 +310,8 @@ class NotifyApi(object):
 
             offset = offset + limit
 
-        url = BASE_URL + 'streams?channel=' + ','.join(elem[0] for elem in ret)
-
-        try:
-            req = requests.get(url, headers=HEAD)
-        except Exception as ex:
-            print('Exception in get_status::requests.get()',
-                  '__doc__ = ' + str(ex.__doc__), file=sys.stderr, sep='\n')
-            return ret
-
-        try:
-            json = req.json()
-        except ValueError:
-            print('Failed to parse json in get_status',
-                  file=sys.stderr)
-            return ret
+        cmd = 'streams?channel=' + ','.join(elem[0] for elem in ret)
+        json = self.access_kraken(cmd, None)
 
         if 'streams' in json:
             for elem in ret:
