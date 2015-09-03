@@ -246,7 +246,6 @@ class NotifyApi(object):
         limit = 100
         cont = True
         while cont:
-            url = BASE_URL + '/streams'
             payload = {'channel': ','.join(chan), 'limit': limit,
                        'offset': offset}
             resp = self.access_kraken('/streams', payload)
@@ -254,14 +253,16 @@ class NotifyApi(object):
                 break
 
             for stream in resp['streams']:
-                ret.append((stream['channel']['name'], True, self.repl(stream, stream['channel']['name'], self.fmt.user_message)))
+                ret.append((stream['channel']['name'], True, self.repl(stream,
+                            stream['channel']['name'], self.fmt.user_message)))
             offset = offset + limit
             cont = len(resp['streams']) > 0
 
         names = [a[0] for a in ret]
         for ch in chan:
             if ch not in names and len(str.strip(ch)) > 0:
-                ret.append((ch, False, self.repl(None, ch, self.fmt.user_message_off)))
+                ret.append((ch, False, self.repl(None, ch,
+                                                 self.fmt.user_message_off)))
         return ret
 
     def show_notification(self, title, message):
@@ -277,7 +278,7 @@ class NotifyApi(object):
 
         Note:
         if you are calling .show_notification() by itself then you need make
-        sure that you call .notify_uninit() after one or more calls of this method
+        sure that you call .notify_uninit() after any call of this method
         '''
         if self.ninited is False:
             self.notify_init()
