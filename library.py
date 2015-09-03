@@ -13,6 +13,7 @@ BASE_URL = 'https://api.twitch.tv/kraken/'
 CLIENT_ID = 'pvv7ytxj4v7i10h0p3s7ewf4vpoz5fc'
 HEAD = {'Accept': 'application/vnd.twitch.v3+json',
         'Client-ID': CLIENT_ID}
+LIMIT = 100
 
 
 class Settings(object):
@@ -247,10 +248,9 @@ class NotifyApi(object):
             return ret
 
         offset = 0
-        limit = 100
         cont = True
         while cont:
-            payload = {'channel': ','.join(chan), 'limit': limit,
+            payload = {'channel': ','.join(chan), 'limit': LIMIT,
                        'offset': offset}
             resp = self.access_kraken('/streams', payload)
             if resp is None:
@@ -260,7 +260,7 @@ class NotifyApi(object):
                 ret.append((stream['channel']['name'], True,
                             self.repl(stream, stream['channel']['name'],
                                       self.fmt.user_message)))
-            offset = offset + limit
+            offset = offset + LIMIT
             cont = len(resp['streams']) > 0
 
         names = [a[0] for a in ret]
@@ -303,18 +303,17 @@ class NotifyApi(object):
         '''
         ret = []
         offset = 0
-        limit = 100
 
         while True:
             fol = self.get_followed_channels({'offset': offset,
-                                              'limit': limit})
+                                              'limit': LIMIT})
             for chan in fol:
                 ret.append([chan, None, None])
 
             if len(fol) == 0:
                 break
 
-            offset = offset + limit
+            offset = offset + LIMIT
 
         cmd = 'streams?channel=' + ','.join(elem[0] for elem in ret)
         json = self.access_kraken(cmd, None)
