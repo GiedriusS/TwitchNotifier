@@ -165,7 +165,7 @@ class NotifyApi(object):
         Returns a list of channels that user follows
         '''
         ret = []
-        cmd = '/users/' + self.nick + '/follows/channels'
+        cmd = 'users/' + self.nick + '/follows/channels'
 
         if payload is None:
             payload = {}
