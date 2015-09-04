@@ -397,6 +397,7 @@ class NotifyApi(object):
         self.fhand.write(repl(stream, chan, msg) + '\n')
         self.fhand.flush()
 
+
 def repl(stream, chan, msg):
     '''
     Returns msg with replaced stuff from stream
