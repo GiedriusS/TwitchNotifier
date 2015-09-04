@@ -60,4 +60,4 @@ You don't have to reload twitchnotifier to use new configuration! Send SIGHUP to
 | -g/--config    | Full path to a configuration file (overrides the defaults)       |
 
 # Contributing
-Please make sure your patches don't introduce any new pylint or flake8 messages before sending a PR. Thanks
+Please make sure your patches don't introduce any new pylint or flake8 warnings
