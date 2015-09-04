@@ -217,7 +217,7 @@ class NotifyApi(object):
 
         try:
             req = requests.get(url, headers=HEAD, params=payload)
-        except Exception as ex:
+        except requests.exceptions.RequestException as ex:
             print('Exception in access_kraken::requests.get()',
                   '__doc__ = ' + str(ex.__doc__), file=sys.stderr, sep='\n')
             return None
