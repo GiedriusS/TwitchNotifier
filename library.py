@@ -52,8 +52,12 @@ class Settings(object):
         self.cfg = cfg
         self.conf = configparser.ConfigParser()
         self.read_file()
+        self.environment()
 
-        # Environment variables can override settings
+    def environment(self):
+        '''
+        Read environment variables into the settings
+        '''
         self.user_message = os.getenv('user_message', self.user_message)
         self.user_message_off = os.getenv('user_message_off',
                                           self.user_message_off)
