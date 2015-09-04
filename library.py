@@ -141,13 +141,6 @@ class NotifyApi(object):
         if logfile is not None:
             self.fhand = open(logfile, 'a')
 
-    def notify_uninit(self):
-        '''
-        Uninit notify daemon via Notify if it is inited
-        '''
-        if Notify.is_initted() is True:
-            Notify.uninit()
-
     def get_followed_channels(self, payload=None):
         '''
         Get a list of channels the user is following
@@ -181,7 +174,7 @@ class NotifyApi(object):
 
     def __del__(self):
         '''Clean up everything'''
-        self.notify_uninit()
+        notify_uninit()
         if self.fhand is not None:
             self.fhand.close()
 
@@ -265,32 +258,6 @@ class NotifyApi(object):
                                               self.fmt.user_message_off)))
         return ret
 
-    def show_notification(self, title, message):
-        '''
-        Show a notification using libnotify/gobject
-
-        Positional arguments:
-        title - notification title
-        message - notification message
-
-        Raises:
-        RuntimeError - failed to show the notification
-
-        Note:
-        if you are calling .show_notification() by itself then you need make
-        sure that you call .notify_uninit() after any call of this method
-        '''
-        if Notify.is_initted() is False:
-            Notify.init('TwitchNotifier')
-
-        if Notify.is_initted() is False:
-            raise RuntimeError('Failed to init notify')
-
-        notif = Notify.Notification.new(title, message)
-
-        if not notif.show():
-            raise RuntimeError('Failed to show a notification')
-
     def get_status(self):
         '''
         Get a list of lists in format of [name, True/False/None, stream_obj]
@@ -353,7 +320,7 @@ class NotifyApi(object):
                         continue
 
                     try:
-                        self.show_notification(title, message)
+                        show_notification(title, message)
                     except RuntimeError:
                         print('Failed to show notification!',
                               file=sys.stderr)
@@ -370,13 +337,13 @@ class NotifyApi(object):
                         continue
 
                     try:
-                        self.show_notification(title, message)
+                        show_notification(title, message)
                     except RuntimeError:
                         print('Failed to show notification!',
                               file=sys.stderr)
                         print(new[i][0] + ' is offline')
             i = i + 1
-        self.notify_uninit()
+        notify_uninit()
 
     def log(self, stream, chan, msg):
         '''
@@ -437,6 +404,39 @@ def repl(stream, chan, msg):
 
     return ret
 
+def show_notification(title, message):
+    '''
+    Show a notification using libnotify/gobject
+
+    Positional arguments:
+    title - notification title
+    message - notification message
+
+    Raises:
+    RuntimeError - failed to show the notification
+
+    Note:
+    if you are calling show_notification() by itself then you need make
+    sure that you call notify_uninit() after any call of this method
+    '''
+    if Notify.is_initted() is False:
+        Notify.init('TwitchNotifier')
+
+    if Notify.is_initted() is False:
+        raise RuntimeError('Failed to init notify')
+
+    notif = Notify.Notification.new(title, message)
+
+    if not notif.show():
+        raise RuntimeError('Failed to show a notification')
+
+def notify_uninit():
+    '''
+    Uninit notify daemon via Notify if it is inited
+    '''
+    if Notify.is_initted() is True:
+        Notify.uninit()
+
 if __name__ == '__main__':
     ST = Settings('/home/giedrius/.config/twitchnotifier.cfg')
 
@@ -446,5 +446,5 @@ if __name__ == '__main__':
     STAT = CORE.get_status()
     print(CORE.check_if_online('nadeshot'))
     print(STAT)
-    CORE.show_notification('Hello', 'From TwitchNotifier')
-    CORE.notify_uninit()
+    show_notification('Hello', 'From TwitchNotifier')
+    notify_uninit()
