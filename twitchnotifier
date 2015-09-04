@@ -76,14 +76,14 @@ if __name__ == '__main__':
     if ARGS.online:
         for chan in NEW:
             if chan[1]:
-                print(API.repl(chan[2], chan[0], API.fmt.list_entry))
+                print(library.repl(chan[2], chan[0], API.fmt.list_entry))
         del API
         sys.exit()
 
     if ARGS.offline:
         for chan in NEW:
             if not chan[1] is None and not chan[1]:
-                print(API.repl(chan[2], chan[0], API.fmt.list_entry_off))
+                print(library.repl(chan[2], chan[0], API.fmt.list_entry_off))
         del API
         sys.exit()
 
