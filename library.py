@@ -78,13 +78,17 @@ class Settings(object):
         '''
         Read the file and get needed sections/info
         '''
-        self.conf.read(self.cfg)
         try:
-            opt = self.conf[self.section]
-        except:
+            self.conf.read(self.cfg)
+        except configparser.MissingSectionHeaderError:
+            print(self.cfg + ' contains no section headers!', file=sys.stderr)
+            return
+
+        if self.section not in self.conf:
             print('Missing section in ' + self.cfg, file=sys.stderr)
             return
 
+        opt = self.conf[self.section]
         self.user_message = opt.get('user_message', self.user_message,
                                     raw=True)
         self.user_message_off = opt.get('user_message_off',
