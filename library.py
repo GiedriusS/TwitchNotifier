@@ -122,7 +122,6 @@ class NotifyApi(object):
     nick = ''
     verbose = False
     fhand = None
-    ninited = False
 
     def __init__(self, nick, fmt, logfile, verbose=False):
         '''
@@ -142,24 +141,12 @@ class NotifyApi(object):
         if logfile is not None:
             self.fhand = open(logfile, 'a')
 
-    def notify_init(self):
-        '''
-        Init notify daemon via Notify if it's not inited already
-        '''
-        if self.ninited is False:
-            try:
-                Notify.init('TwitchNotifier')
-                self.ninited = True
-            except:
-                print('Failed to init Notify', file=sys.stderr)
-
     def notify_uninit(self):
         '''
         Uninit notify daemon via Notify if it is inited
         '''
-        if self.ninited is True:
+        if Notify.is_initted() is True:
             Notify.uninit()
-            self.ninited = False
 
     def get_followed_channels(self, payload=None):
         '''
@@ -293,10 +280,10 @@ class NotifyApi(object):
         if you are calling .show_notification() by itself then you need make
         sure that you call .notify_uninit() after any call of this method
         '''
-        if self.ninited is False:
-            self.notify_init()
+        if Notify.is_initted() is False:
+            Notify.init('TwitchNotifier')
 
-        if self.ninited is False:
+        if Notify.is_initted() is False:
             raise RuntimeError('Failed to init notify')
 
         notif = Notify.Notification.new(title, message)
@@ -350,7 +337,7 @@ class NotifyApi(object):
         old - older list returned from get_status()
         '''
         i = 0
-        self.notify_init()
+        Notify.init('TwitchNotifier')
         while i < len(new) and i < len(old):
             if (not new[i][1] is None and not old[i][1] is None and
                     new[i][0] == old[i][0]):
@@ -361,7 +348,7 @@ class NotifyApi(object):
                     message = repl(new[i][2], new[i][0],
                                    self.fmt.notification_cont)
                     self.log(new[i][2], new[i][0], self.fmt.log_fmt)
-                    if self.ninited is False:
+                    if Notify.is_initted() is False:
                         print(new[i][0] + ' is online')
                         continue
 
@@ -378,7 +365,7 @@ class NotifyApi(object):
                     message = repl(new[i][2], new[i][0],
                                    self.fmt.notification_cont_off)
                     self.log(new[i][2], new[i][0], self.fmt.log_fmt_off)
-                    if self.ninited is False:
+                    if Notify.is_initted() is False:
                         print(new[i][0] + ' is offline')
                         continue
 
