@@ -416,8 +416,8 @@ def show_notification(title, message):
     RuntimeError - failed to show the notification
 
     Note:
-    if you are calling show_notification() by itself then you need make
-    sure that you call notify_uninit() after any call of this method
+    This function is designed to be called a few times in a row so
+    make sure to call notify_uninit() afterwards
     '''
     if Notify.is_initted() is False:
         Notify.init('TwitchNotifier')
