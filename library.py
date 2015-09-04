@@ -258,16 +258,16 @@ class NotifyApi(object):
 
             for stream in resp['streams']:
                 ret.append((stream['channel']['name'], True,
-                            self.repl(stream, stream['channel']['name'],
-                                      self.fmt.user_message)))
+                            repl(stream, stream['channel']['name'],
+                                 self.fmt.user_message)))
             offset = offset + LIMIT
             cont = len(resp['streams']) > 0
 
         names = [a[0] for a in ret]
         for elem in chan:
             if elem not in names and len(str.strip(elem)) > 0:
-                ret.append((elem, False, self.repl(None, elem,
-                                                   self.fmt.user_message_off)))
+                ret.append((elem, False, repl(None, elem,
+                                              self.fmt.user_message_off)))
         return ret
 
     def show_notification(self, title, message):
@@ -348,10 +348,10 @@ class NotifyApi(object):
                     new[i][0] == old[i][0]):
 
                 if new[i][1] and not old[i][1]:
-                    title = self.repl(new[i][2], new[i][0],
-                                      self.fmt.notification_title)
-                    message = self.repl(new[i][2], new[i][0],
-                                        self.fmt.notification_cont)
+                    title = repl(new[i][2], new[i][0],
+                                 self.fmt.notification_title)
+                    message = repl(new[i][2], new[i][0],
+                                   self.fmt.notification_cont)
                     self.log(new[i][2], new[i][0], self.fmt.log_fmt)
                     if self.ninited is False:
                         print(new[i][0] + ' is online')
@@ -365,10 +365,10 @@ class NotifyApi(object):
                         print(new[i][0] + ' is online')
 
                 elif not new[i][1] and old[i][1]:
-                    title = self.repl(new[i][2], new[i][0],
-                                      self.fmt.notification_title_off)
-                    message = self.repl(new[i][2], new[i][0],
-                                        self.fmt.notification_cont_off)
+                    title = repl(new[i][2], new[i][0],
+                                 self.fmt.notification_title_off)
+                    message = repl(new[i][2], new[i][0],
+                                   self.fmt.notification_cont_off)
                     self.log(new[i][2], new[i][0], self.fmt.log_fmt_off)
                     if self.ninited is False:
                         print(new[i][0] + ' is offline')
@@ -394,52 +394,52 @@ class NotifyApi(object):
         '''
         if self.fhand is None:
             return
-        self.fhand.write(self.repl(stream, chan, msg) + '\n')
+        self.fhand.write(repl(stream, chan, msg) + '\n')
         self.fhand.flush()
 
-    def repl(self, stream, chan, msg):
-        '''
-        Returns msg with replaced stuff from stream
-        Note that only $1 and $2 will be replaced if stream is offline
+def repl(stream, chan, msg):
+    '''
+    Returns msg with replaced stuff from stream
+    Note that only $1 and $2 will be replaced if stream is offline
 
-        Keys:
-        $1 - streamer username
-        $2 - offline/online
-        $3 - game
-        $4 - viewers
-        $5 - status
-        $6 - language
-        $7 - average FPS
-        $8 - followers
-        $9 - views
-        ${} - everything between {} will be replaced as if strftime is applied
+    Keys:
+    $1 - streamer username
+    $2 - offline/online
+    $3 - game
+    $4 - viewers
+    $5 - status
+    $6 - language
+    $7 - average FPS
+    $8 - followers
+    $9 - views
+    ${} - everything between {} will be replaced as if strftime is applied
 
-        Positional arguments:
-        stream - stream object (a dictionary with certain values)
-        chan - channel name
-        msg - a format string
+    Positional arguments:
+    stream - stream object (a dictionary with certain values)
+    chan - channel name
+    msg - a format string
 
-        Returns msg formatted
-        '''
-        ret = msg
-        ret = ret.replace('$2', 'online' if stream else 'offline')
-        ret = ret.replace('$1', chan)
-        ret = re.sub(r'\$\{(.*)\}', lambda x: time.strftime(x.group(1)), ret)
+    Returns msg formatted
+    '''
+    ret = msg
+    ret = ret.replace('$2', 'online' if stream else 'offline')
+    ret = ret.replace('$1', chan)
+    ret = re.sub(r'\$\{(.*)\}', lambda x: time.strftime(x.group(1)), ret)
 
-        if stream and isinstance(stream, dict):
-            ret = ret.replace('$3', str(stream.get('game', '')))
-            ret = ret.replace('$4', str(stream.get('viewers', '')))
-            ret = ret.replace('$5', stream.get('channel', {}).get('status',
-                                                                  ''))
-            ret = ret.replace('$6', stream.get('channel', {}).get('language',
-                                                                  ''))
-            ret = ret.replace('$7', str(stream.get('average_fps')))
-            ret = ret.replace('$8', str(stream.get('channel',
-                                                   {}).get('followers', '')))
-            ret = ret.replace('$9', str(stream.get('channel', {}).get('views',
-                                                                      '')))
+    if stream and isinstance(stream, dict):
+        ret = ret.replace('$3', str(stream.get('game', '')))
+        ret = ret.replace('$4', str(stream.get('viewers', '')))
+        ret = ret.replace('$5', stream.get('channel', {}).get('status',
+                                                              ''))
+        ret = ret.replace('$6', stream.get('channel', {}).get('language',
+                                                              ''))
+        ret = ret.replace('$7', str(stream.get('average_fps')))
+        ret = ret.replace('$8', str(stream.get('channel',
+                                               {}).get('followers', '')))
+        ret = ret.replace('$9', str(stream.get('channel', {}).get('views',
+                                                                  '')))
 
-        return ret
+    return ret
 
 if __name__ == '__main__':
     ST = Settings('/home/giedrius/.config/twitchnotifier.cfg')
