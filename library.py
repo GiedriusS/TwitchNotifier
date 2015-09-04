@@ -174,7 +174,7 @@ class NotifyApi(object):
 
     def __del__(self):
         '''Clean up everything'''
-        notify_uninit()
+        Notify.uninit()
         if self.fhand is not None:
             self.fhand.close()
 
@@ -343,7 +343,7 @@ class NotifyApi(object):
                               file=sys.stderr)
                         print(new[i][0] + ' is offline')
             i = i + 1
-        notify_uninit()
+        Notify.uninit()
 
     def log(self, stream, chan, msg):
         '''
@@ -417,7 +417,7 @@ def show_notification(title, message):
 
     Note:
     This function is designed to be called a few times in a row so
-    make sure to call notify_uninit() afterwards
+    make sure to call Notify.uninit() afterwards
     '''
     if Notify.is_initted() is False:
         Notify.init('TwitchNotifier')
@@ -430,13 +430,6 @@ def show_notification(title, message):
     if not notif.show():
         raise RuntimeError('Failed to show a notification')
 
-def notify_uninit():
-    '''
-    Uninit notify daemon via Notify if it is inited
-    '''
-    if Notify.is_initted() is True:
-        Notify.uninit()
-
 if __name__ == '__main__':
     ST = Settings('/home/giedrius/.config/twitchnotifier.cfg')
 
@@ -447,4 +440,4 @@ if __name__ == '__main__':
     print(CORE.check_if_online('nadeshot'))
     print(STAT)
     show_notification('Hello', 'From TwitchNotifier')
-    notify_uninit()
+    Notify.uninit()
