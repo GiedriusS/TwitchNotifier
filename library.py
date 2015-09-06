@@ -277,8 +277,9 @@ class NotifyApi(object):
 
             offset = offset + LIMIT
 
-        cmd = 'streams?channel=' + ','.join(elem[0] for elem in ret)
-        json = self.access_kraken(cmd, None)
+        cmd = 'streams'
+        payload = {'channel': ','.join(elem[0] for elem in ret)}
+        json = self.access_kraken(cmd, payload)
 
         if json and 'streams' in json:
             for elem in ret:
