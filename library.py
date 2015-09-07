@@ -282,15 +282,21 @@ class NotifyApi(object):
             offset = offset + LIMIT
 
         cmd = 'streams'
-        payload = {'channel': ','.join(elem[0] for elem in ret)}
-        json = self.access_kraken(cmd, payload)
+        offset = 0
+        while True:
+            payload = {'channel': ','.join(elem[0] for elem in ret),
+                       'offset': offset, 'limit': LIMIT}
+            json = self.access_kraken(cmd, payload)
+            if json and 'streams' in json:
+                for elem in ret:
+                    for stream in json['streams']:
+                        if stream['channel']['name'] == elem[0]:
+                            elem[1] = True
+                            elem[2] = stream
 
-        if json and 'streams' in json:
-            for elem in ret:
-                for stream in json['streams']:
-                    if stream['channel']['name'] == elem[0]:
-                        elem[1] = True
-                        elem[2] = stream
+            if not json or len(json['streams']) == 0:
+                break
+            offset = offset + LIMIT
 
         # Turn all None channels into False
         # Because we have already passed the part with exceptions
