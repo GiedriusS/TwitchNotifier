@@ -85,7 +85,8 @@ class Settings(object):
             return
 
         if self.section not in self.conf:
-            print('Missing section in ' + self.cfg, file=sys.stderr)
+            print('Missing section "' + self.section + '" in ' + self.cfg,
+                  file=sys.stderr)
             return
 
         opt = self.conf[self.section]
