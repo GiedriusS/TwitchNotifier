@@ -43,7 +43,7 @@ if __name__ == '__main__':
     ARGS = PARSER.parse_args()
     if not ARGS.nick and not ARGS.user:
         print('You have to pass atleast either -c/--nick or '
-              '-u/--user to TwitchNotifier!')
+              '-u/--user to ' + sys.argv[0] + '!')
         sys.exit(1)
 
     CONFIG_FILE = os.environ.get('XDG_CONFIG_HOME',
