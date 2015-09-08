@@ -415,6 +415,7 @@ def repl(stream, chan, msg):
 
     return ret
 
+
 def show_notification(title, message):
     '''
     Show a notification using libnotify/gobject
