@@ -326,9 +326,6 @@ class NotifyApi(object):
                     message = repl(new[i][2], new[i][0],
                                    self.fmt.notification_cont)
                     self.log(new[i][2], new[i][0], self.fmt.log_fmt)
-                    if Notify.is_initted() is False:
-                        print(new[i][0] + ' is online')
-                        continue
 
                     try:
                         show_notification(title, message)
@@ -343,9 +340,6 @@ class NotifyApi(object):
                     message = repl(new[i][2], new[i][0],
                                    self.fmt.notification_cont_off)
                     self.log(new[i][2], new[i][0], self.fmt.log_fmt_off)
-                    if Notify.is_initted() is False:
-                        print(new[i][0] + ' is offline')
-                        continue
 
                     try:
                         show_notification(title, message)
