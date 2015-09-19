@@ -4,7 +4,7 @@ A python module that setups the program for distribution
 from distutils.core import setup
 
 setup(name='TwitchNotifier',
-      version='0.3',
+      version='0.4',
       description='Daemon that notifies you using libnotify if followed chan '
                   'goes off/on. Optionally only does this once.',
       author='Giedrius Statkevičius',
