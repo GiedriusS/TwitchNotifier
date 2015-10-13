@@ -7,6 +7,8 @@ import re
 import requests
 import sys
 import os
+import gi
+gi.require_version('Notify', '0.7')
 from gi.repository import Notify
 
 BASE_URL = 'https://api.twitch.tv/kraken/'
