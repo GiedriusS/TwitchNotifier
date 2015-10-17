@@ -16,6 +16,7 @@ CLIENT_ID = 'pvv7ytxj4v7i10h0p3s7ewf4vpoz5fc'
 HEAD = {'Accept': 'application/vnd.twitch.v3+json',
         'Client-ID': CLIENT_ID}
 LIMIT = 100
+SECTION = 'messages'
 
 
 class Settings(object):
@@ -23,7 +24,6 @@ class Settings(object):
     A simple wrapper around configparser to read configuration
     '''
     cfg = ''
-    section = 'messages'
 
     user_message = '$1 is $2'
     user_message_off = '$1 is $2'
@@ -86,12 +86,12 @@ class Settings(object):
             print(self.cfg + ' contains no section headers!', file=sys.stderr)
             return
 
-        if self.section not in self.conf:
-            print('Missing section "' + self.section + '" in ' + self.cfg,
+        if SECTION not in self.conf:
+            print('Missing section "' + SECTION + '" in ' + self.cfg,
                   file=sys.stderr)
             return
 
-        opt = self.conf[self.section]
+        opt = self.conf[SECTION]
         self.user_message = opt.get('user_message', self.user_message,
                                     raw=True)
         self.user_message_off = opt.get('user_message_off',
