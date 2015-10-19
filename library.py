@@ -205,6 +205,14 @@ class NotifyApi(object):
                   '__doc__ = ' + str(ex.__doc__), file=sys.stderr, sep='\n')
             return None
 
+        if self.verbose:
+            print('-'*20, file=sys.stderr)
+            print('req.text: ' + req.text, 'req.status_code: ' +
+                  str(req.status_code), 'req.headers: ' + str(req.headers),
+                  file=sys.stderr, sep='\n')
+            print('cmd: ' + cmd, 'payload: ' + str(payload), file=sys.stderr, sep='\n')
+            print('-'*20, file=sys.stderr)
+
         if req.status_code == requests.codes.bad:
             print('Kraken request returned bad code, bailing', file=sys.stderr)
             return None
@@ -214,10 +222,6 @@ class NotifyApi(object):
         except ValueError:
             print('Failed to parse json in access_kraken',
                   file=sys.stderr)
-            if self.verbose:
-                print('req.text: ' + req.text, 'req.status_code: ' +
-                      str(req.status_code), 'req.headers: ' + str(req.headers),
-                      file=sys.stderr, sep='\n')
             return None
         return json
 
