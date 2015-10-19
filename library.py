@@ -261,7 +261,7 @@ class NotifyApi(object):
                         elem[2] = repl(stream, elem[0],
                                        self.fmt.user_message)
             offset = offset + LIMIT
-            cont = len(resp['streams']) > len(chan)
+            cont = len(resp['streams']) > 0
 
         for elem in ret:
             if elem[1] is None:
