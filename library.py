@@ -157,7 +157,7 @@ class NotifyApi(object):
         Returns a list of channels that user follows
         '''
         ret = []
-        cmd = 'users/' + self.nick + '/follows/channels'
+        cmd = '/users/' + self.nick + '/follows/channels'
 
         if payload is None:
             payload = {}
@@ -288,7 +288,7 @@ class NotifyApi(object):
 
             offset = offset + LIMIT
 
-        cmd = 'streams'
+        cmd = '/streams'
         offset = 0
         while True:
             payload = {'channel': ','.join(elem[0] for elem in ret),
