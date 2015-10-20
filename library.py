@@ -11,7 +11,7 @@ import gi
 gi.require_version('Notify', '0.7')
 from gi.repository import Notify
 
-BASE_URL = 'https://api.twitch.tv/kraken/'
+BASE_URL = 'https://api.twitch.tv/kraken'
 CLIENT_ID = 'pvv7ytxj4v7i10h0p3s7ewf4vpoz5fc'
 HEAD = {'Accept': 'application/vnd.twitch.v3+json',
         'Client-ID': CLIENT_ID}
