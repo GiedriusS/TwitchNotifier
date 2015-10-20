@@ -446,7 +446,7 @@ def show_notification(title, message):
 if __name__ == '__main__':
     ST = Settings('/home/giedrius/.config/twitchnotifier.cfg')
 
-    CORE = NotifyApi('Xangold', ST, '/home/giedrius/log', True)
+    CORE = NotifyApi('Xangold', ST, '/home/giedrius/log', False)
     LIST_OF_CHANS = CORE.get_followed_channels()
     print(LIST_OF_CHANS, len(LIST_OF_CHANS))
     STAT = CORE.get_status()
