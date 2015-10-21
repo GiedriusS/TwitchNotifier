@@ -25,8 +25,7 @@ class Settings(object):
     '''
     cfg = ''
 
-    user_message = '$1 is $2'
-    user_message_off = '$1 is $2'
+    user_message = {'on': '$1 is $2', 'off': '$1 is $2'}
 
     notification_title = '$1'
     notification_cont = 'is $2'
@@ -60,9 +59,9 @@ class Settings(object):
         '''
         Read environment variables into the settings
         '''
-        self.user_message = os.getenv('user_message', self.user_message)
-        self.user_message_off = os.getenv('user_message_off',
-                                          self.user_message_off)
+        self.user_message['on'] = os.getenv('user_message', self.user_message['on'])
+        self.user_message['off'] = os.getenv('user_message_off',
+                                             self.user_message['off'])
         self.notification_title = os.getenv('notification_title',
                                             self.notification_title)
         self.notification_cont = os.getenv('notification_content',
@@ -92,11 +91,11 @@ class Settings(object):
             return
 
         opt = self.conf[SECTION]
-        self.user_message = opt.get('user_message', self.user_message,
-                                    raw=True)
-        self.user_message_off = opt.get('user_message_off',
-                                        self.user_message_off,
-                                        raw=True)
+        self.user_message['on'] = opt.get('user_message', self.user_message['on'],
+                                          raw=True)
+        self.user_message['off'] = opt.get('user_message_off',
+                                           self.user_message['off'],
+                                           raw=True)
         self.notification_title = opt.get('notification_title',
                                           self.notification_title,
                                           raw=True)
@@ -259,14 +258,14 @@ class NotifyApi(object):
                     if elem[0] == stream['channel']['name']:
                         elem[1] = True
                         elem[2] = repl(stream, elem[0],
-                                       self.fmt.user_message)
+                                       self.fmt.user_message['on'])
             offset = offset + LIMIT
             cont = len(resp['streams']) > 0
 
         for elem in ret:
             if elem[1] is None:
                 elem[1] = False
-                elem[2] = repl(None, elem[0], self.fmt.user_message_off)
+                elem[2] = repl(None, elem[0], self.fmt.user_message['off'])
         return ret
 
     def get_status(self):
