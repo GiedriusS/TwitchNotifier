@@ -26,10 +26,8 @@ class Settings(object):
     cfg = ''
 
     user_message = {'on': '$1 is $2', 'off': '$1 is $2'}
-
-    notification_title = '$1'
+    notification_title = {'on': '$1', 'off': '$1'}
     notification_cont = 'is $2'
-    notification_title_off = '$1'
     notification_cont_off = 'is $2'
 
     list_entry = '$1'
@@ -62,14 +60,14 @@ class Settings(object):
         self.user_message['on'] = os.getenv('user_message', self.user_message['on'])
         self.user_message['off'] = os.getenv('user_message_off',
                                              self.user_message['off'])
-        self.notification_title = os.getenv('notification_title',
-                                            self.notification_title)
+        self.notification_title['on'] = os.getenv('notification_title',
+                                                  self.notification_title['on'])
         self.notification_cont = os.getenv('notification_content',
                                            self.notification_cont)
         self.list_entry = os.getenv('list_entry', self.list_entry)
         self.log_fmt = os.getenv('log_fmt', self.log_fmt)
-        self.notification_title_off = os.getenv('notification_title_off',
-                                                self.notification_title_off)
+        self.notification_title['off'] = os.getenv('notification_title_off',
+                                                   self.notification_title['off'])
         self.notification_cont_off = os.getenv('notification_content_off',
                                                self.notification_cont_off)
         self.list_entry_off = os.getenv('list_entry_off', self.list_entry_off)
@@ -96,12 +94,12 @@ class Settings(object):
         self.user_message['off'] = opt.get('user_message_off',
                                            self.user_message['off'],
                                            raw=True)
-        self.notification_title = opt.get('notification_title',
-                                          self.notification_title,
-                                          raw=True)
-        self.notification_title_off = opt.get('notification_title_off',
-                                              self.notification_title_off,
-                                              raw=True)
+        self.notification_title['on'] = opt.get('notification_title',
+                                                self.notification_title['on'],
+                                                raw=True)
+        self.notification_title['off'] = opt.get('notification_title_off',
+                                                 self.notification_title['off'],
+                                                 raw=True)
         self.notification_cont = opt.get('notification_content',
                                          self.notification_cont,
                                          raw=True)
@@ -328,7 +326,7 @@ class NotifyApi(object):
 
                 if new[i][1] and not old[i][1]:
                     title = repl(new[i][2], new[i][0],
-                                 self.fmt.notification_title)
+                                 self.fmt.notification_title['on'])
                     message = repl(new[i][2], new[i][0],
                                    self.fmt.notification_cont)
                     self.log(new[i][2], new[i][0], self.fmt.log_fmt)
@@ -342,7 +340,7 @@ class NotifyApi(object):
 
                 elif not new[i][1] and old[i][1]:
                     title = repl(new[i][2], new[i][0],
-                                 self.fmt.notification_title_off)
+                                 self.fmt.notification_title['off'])
                     message = repl(new[i][2], new[i][0],
                                    self.fmt.notification_cont_off)
                     self.log(new[i][2], new[i][0], self.fmt.log_fmt_off)
