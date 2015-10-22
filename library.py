@@ -293,7 +293,7 @@ class NotifyApi(object):
                             elem[1] = True
                             elem[2] = stream
 
-            if not json or len(json['streams']) == 0:
+            if not json or (json and 'streams' in json and len(json['streams']) == 0):
                 break
             offset = offset + LIMIT
 
