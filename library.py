@@ -27,14 +27,9 @@ class Settings(object):
 
     user_message = {'on': '$1 is $2', 'off': '$1 is $2'}
     notification_title = {'on': '$1', 'off': '$1'}
-    notification_cont = 'is $2'
-    notification_cont_off = 'is $2'
-
-    list_entry = '$1'
-    list_entry_off = '$1'
-
-    log_fmt = '(${%d %H:%M:%S}) $1 is $2'
-    log_fmt_off = '(${%d %H:%M:%S}) $1 is $2'
+    notification_cont = {'on': 'is $2', 'off': 'is $2'}
+    list_entry = {'on': '$1', 'off': '$1'}
+    log_fmt = {'on': '(${%d %H:%M:%S}) $1 is $2', 'off': '(${%d %H:%M:%S}) $1 is $2'}
 
     def __init__(self, cfg):
         '''
@@ -64,14 +59,14 @@ class Settings(object):
                                                   self.notification_title['on'])
         self.notification_title['off'] = os.getenv('notification_title_off',
                                                    self.notification_title['off'])
-        self.notification_cont = os.getenv('notification_content',
-                                           self.notification_cont)
-        self.list_entry = os.getenv('list_entry', self.list_entry)
-        self.log_fmt = os.getenv('log_fmt', self.log_fmt)
-        self.notification_cont_off = os.getenv('notification_content_off',
-                                               self.notification_cont_off)
-        self.list_entry_off = os.getenv('list_entry_off', self.list_entry_off)
-        self.log_fmt_off = os.getenv('log_fmt_off', self.log_fmt_off)
+        self.notification_cont['on'] = os.getenv('notification_content',
+                                                 self.notification_cont['on'])
+        self.notification_cont['off'] = os.getenv('notification_content_off',
+                                                  self.notification_cont['off'])
+        self.list_entry['on'] = os.getenv('list_entry', self.list_entry['on'])
+        self.list_entry['off'] = os.getenv('list_entry_off', self.list_entry['off'])
+        self.log_fmt['on'] = os.getenv('log_fmt', self.log_fmt['on'])
+        self.log_fmt['off'] = os.getenv('log_fmt_off', self.log_fmt['off'])
 
     def read_file(self):
         '''
@@ -100,19 +95,19 @@ class Settings(object):
         self.notification_title['off'] = opt.get('notification_title_off',
                                                  self.notification_title['off'],
                                                  raw=True)
-        self.notification_cont = opt.get('notification_content',
-                                         self.notification_cont,
+        self.notification_cont['on'] = opt.get('notification_content',
+                                               self.notification_cont['on'],
+                                               raw=True)
+        self.notification_cont['off'] = opt.get('notification_content_off',
+                                                self.notification_cont['off'],
+                                                raw=True)
+        self.list_entry['on'] = opt.get('list_entry', self.list_entry['on'], raw=True)
+        self.list_entry['off'] = opt.get('list_entry_off',
+                                         self.list_entry['off'],
                                          raw=True)
-        self.notification_cont_off = opt.get('notification_content_off',
-                                             self.notification_cont_off,
-                                             raw=True)
-        self.list_entry = opt.get('list_entry', self.list_entry, raw=True)
-        self.list_entry_off = opt.get('list_entry_off',
-                                      self.list_entry_off,
+        self.log_fmt['on'] = opt.get('log_fmt', self.log_fmt['on'], raw=True)
+        self.log_fmt['off'] = opt.get('log_fmt_off', self.log_fmt['off'],
                                       raw=True)
-        self.log_fmt = opt.get('log_fmt', self.log_fmt, raw=True)
-        self.log_fmt_off = opt.get('log_fmt_off', self.log_fmt_off,
-                                   raw=True)
 
 
 class NotifyApi(object):
@@ -328,8 +323,8 @@ class NotifyApi(object):
                     title = repl(new[i][2], new[i][0],
                                  self.fmt.notification_title['on'])
                     message = repl(new[i][2], new[i][0],
-                                   self.fmt.notification_cont)
-                    self.log(new[i][2], new[i][0], self.fmt.log_fmt)
+                                   self.fmt.notification_cont['on'])
+                    self.log(new[i][2], new[i][0], self.fmt.log_fmt['on'])
 
                     try:
                         show_notification(title, message)
@@ -342,8 +337,8 @@ class NotifyApi(object):
                     title = repl(new[i][2], new[i][0],
                                  self.fmt.notification_title['off'])
                     message = repl(new[i][2], new[i][0],
-                                   self.fmt.notification_cont_off)
-                    self.log(new[i][2], new[i][0], self.fmt.log_fmt_off)
+                                   self.fmt.notification_cont['off'])
+                    self.log(new[i][2], new[i][0], self.fmt.log_fmt['off'])
 
                     try:
                         show_notification(title, message)
