@@ -63,13 +63,13 @@ if __name__ == '__main__':
     if ARGS.user:
         LST = ARGS.user.split(',')
         RET = API.check_if_online(LST)
-        if len(RET) == 0:
-            del API
-            sys.exit(1)
+        EXIT_CODE = 1
         for el in RET:
+            if el[1] is True:
+                EXIT_CODE = 0
             print(el[2])
         del API
-        sys.exit()
+        sys.exit(EXIT_CODE)
 
     NEW = API.get_status()
 
