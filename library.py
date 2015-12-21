@@ -243,7 +243,7 @@ class NotifyApi(object):
             payload = {'channel': ','.join(chan), 'limit': LIMIT,
                        'offset': offset}
             resp = self.access_kraken('/streams', payload)
-            if resp is None:
+            if resp is None or 'streams' not in resp:
                 break
 
             for stream in resp['streams']:
