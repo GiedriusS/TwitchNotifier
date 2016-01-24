@@ -199,10 +199,10 @@ class NotifyApi(object):
 
         if self.verbose:
             print('-'*20, file=sys.stderr)
+            print('cmd: ' + cmd, 'payload: ' + str(payload), file=sys.stderr, sep='\n')
             print('req.text: ' + req.text, 'req.status_code: ' +
                   str(req.status_code), 'req.headers: ' + str(req.headers),
                   file=sys.stderr, sep='\n')
-            print('cmd: ' + cmd, 'payload: ' + str(payload), file=sys.stderr, sep='\n')
             print('-'*20, file=sys.stderr)
 
         if req.status_code == requests.codes.bad:
