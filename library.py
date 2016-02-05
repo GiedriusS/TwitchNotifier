@@ -219,23 +219,20 @@ class NotifyApi(object):
 
     def check_if_online(self, chan):
         '''
-        Gets a list of lists in format of (channel, status, formatted_msg)
+        Gets a dictionary of tuples in format of (status, formatted_msg)
 
         Positional arguments:
         chan - list of channel names
 
-        Returns a list of lists of format (channel, status, formatted_msg)
+        Returns a dictionary of tuples of format (status, formatted_msg)
         '''
-        ret = []
+        ret = {}
 
         if len(chan) == 0:
             if self.verbose:
                 print('channel passed to check_if_online is empty',
                       file=sys.stderr)
             return ret
-
-        for elem in chan:
-            ret.append([elem, None, None])
 
         offset = 0
         cont = True
@@ -247,18 +244,16 @@ class NotifyApi(object):
                 break
 
             for stream in resp['streams']:
-                for elem in ret:
-                    if elem[0] == stream['channel']['name']:
-                        elem[1] = True
-                        elem[2] = repl(stream, elem[0],
-                                       self.fmt.user_message['on'])
+                name = stream['channel']['name']
+                ret[name] = (True, repl(stream, name, self.fmt.user_message['on']))
+
             offset = offset + LIMIT
             cont = len(resp['streams']) > 0
 
-        for elem in ret:
-            if elem[1] is None:
-                elem[1] = False
-                elem[2] = repl(None, elem[0], self.fmt.user_message['off'])
+        for name in chan:
+            if name not in ret:
+                ret[name] = (False, repl(None, name, self.fmt.user_message['off']))
+
         return ret
 
     def get_status(self):

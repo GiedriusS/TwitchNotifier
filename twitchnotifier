@@ -64,10 +64,10 @@ if __name__ == '__main__':
         LST = ARGS.user.split(',')
         RET = API.check_if_online(LST)
         EXIT_CODE = 1
-        for el in RET:
-            if el[1] is True:
+        for name, data in RET.items():
+            if data[0] is True:
                 EXIT_CODE = 0
-            print(el[2])
+            print(data[1])
         del API
         sys.exit(EXIT_CODE)
 
