@@ -74,16 +74,16 @@ if __name__ == '__main__':
     NEW = API.get_status()
 
     if ARGS.online:
-        for chan in NEW:
-            if chan[1]:
-                print(library.repl(chan[2], chan[0], API.fmt.list_entry['on']))
+        for k, v in NEW.items():
+            if v[0]:
+                print(library.repl(v[1], k, API.fmt.list_entry['on']))
         del API
         sys.exit()
 
     if ARGS.offline:
-        for chan in NEW:
-            if not chan[1] is None and not chan[1]:
-                print(library.repl(chan[2], chan[0], API.fmt.list_entry['off']))
+        for k, v in NEW.items():
+            if not v[0]:
+                print(library.repl(v[1], k, API.fmt.list_entry['off']))
         del API
         sys.exit()
 

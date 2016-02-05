@@ -4,9 +4,9 @@ TwitchTV and config reading abstractions for TN
 import configparser
 import time
 import re
-import requests
 import sys
 import os
+import requests
 import gi
 gi.require_version('Notify', '0.7')
 from gi.repository import Notify
@@ -263,17 +263,18 @@ class NotifyApi(object):
 
     def get_status(self):
         '''
-        Get a list of lists in format of [name, True/False/None, stream_obj]
+        Get a dictionary in format of {'name': (True/False/None, stream_obj), ...}
         True = channel is online, False = channel is offline, None = error
         '''
-        ret = []
+        followed_chans = []
+        ret = {}
         offset = 0
 
         while True:
             fol = self.get_followed_channels({'offset': offset,
                                               'limit': LIMIT})
             for chan in fol:
-                ret.append([chan, None, None])
+                followed_chans.append(chan)
 
             if len(fol) == 0:
                 break
@@ -283,70 +284,59 @@ class NotifyApi(object):
         cmd = '/streams'
         offset = 0
         while True:
-            payload = {'channel': ','.join(elem[0] for elem in ret),
+            payload = {'channel': ','.join(name for name in followed_chans),
                        'offset': offset, 'limit': LIMIT}
             json = self.access_kraken(cmd, payload)
             if json and 'streams' in json:
-                for elem in ret:
-                    for stream in json['streams']:
-                        if stream['channel']['name'] == elem[0]:
-                            elem[1] = True
-                            elem[2] = stream
+                for stream in json['streams']:
+                    ret[stream['channel']['name']] = (True, stream)
 
             if not json or (json and 'streams' in json and len(json['streams']) == 0):
                 break
             offset = offset + LIMIT
 
-        # Turn all None channels into False
-        # Because we have already passed the part with exceptions
-        for elem in ret:
-            if elem[1] is None:
-                elem[1] = False
+        for name in followed_chans:
+            if name not in ret:
+                ret[name] = (False, None)
 
         return ret
 
     def diff(self, new, old):
         '''
-        Computes diff between two lists returned from get_status() and notifies
+        Computes diff between two dictionaries returned from get_status() and notifies
 
         Positional arguments:
-        new - newer list returned from get_status()
-        old - older list returned from get_status()
+        new - newer dictionary returned from get_status()
+        old - older dictionary returned from get_status()
         '''
-        i = 0
         Notify.init('TwitchNotifier')
-        while i < len(new) and i < len(old):
-            if (not new[i][1] is None and not old[i][1] is None and
-                    new[i][0] == old[i][0]):
-
-                if new[i][1] and not old[i][1]:
-                    title = repl(new[i][2], new[i][0],
-                                 self.fmt.notification_title['on'])
-                    message = repl(new[i][2], new[i][0],
-                                   self.fmt.notification_cont['on'])
-                    self.log(new[i][2], new[i][0], self.fmt.log_fmt['on'])
+        for name, data in new.items():
+            if name not in old:
+                continue
+            if data[0] != old[name][0]:
+                if data[0] is True and not old[name][0] is True:
+                    title = repl(data[1], name, self.fmt.notification_title['on'])
+                    message = repl(data[1], name, self.fmt.notification_cont['on'])
+                    self.log(data[1], name, self.fmt.log_fmt['on'])
 
                     try:
                         show_notification(title, message)
                     except RuntimeError:
                         print('Failed to show notification!',
                               file=sys.stderr)
-                        print(new[i][0] + ' is online')
-
-                elif not new[i][1] and old[i][1]:
-                    title = repl(new[i][2], new[i][0],
-                                 self.fmt.notification_title['off'])
-                    message = repl(new[i][2], new[i][0],
-                                   self.fmt.notification_cont['off'])
-                    self.log(new[i][2], new[i][0], self.fmt.log_fmt['off'])
+                        print(name + ' is online')
+                elif old[name][0] is True and not data[0] is True:
+                    title = repl(data[1], name, self.fmt.notification_title['off'])
+                    message = repl(data[1], name, self.fmt.notification_cont['off'])
+                    self.log(data[1], name, self.fmt.log_fmt['off'])
 
                     try:
                         show_notification(title, message)
                     except RuntimeError:
                         print('Failed to show notification!',
                               file=sys.stderr)
-                        print(new[i][0] + ' is offline')
-            i = i + 1
+                        print(name + ' is offline')
+
         Notify.uninit()
 
     def log(self, stream, chan, msg):
