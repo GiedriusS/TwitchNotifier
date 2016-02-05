@@ -308,29 +308,32 @@ class NotifyApi(object):
         for name, data in new.items():
             if name not in old:
                 continue
-            if data[0] != old[name][0]:
-                if data[0] is True and not old[name][0] is True:
-                    title = repl(data[1], name, self.fmt.notification_title['on'])
-                    message = repl(data[1], name, self.fmt.notification_cont['on'])
-                    self.log(data[1], name, self.fmt.log_fmt['on'])
+            if data[0] == old[name][0]:
+                continue
 
-                    try:
-                        show_notification(title, message)
-                    except RuntimeError:
-                        print('Failed to show notification!',
-                              file=sys.stderr)
-                        print(name + ' is online')
-                elif old[name][0] is True and not data[0] is True:
-                    title = repl(data[1], name, self.fmt.notification_title['off'])
-                    message = repl(data[1], name, self.fmt.notification_cont['off'])
-                    self.log(data[1], name, self.fmt.log_fmt['off'])
+            if data[0] is True and not old[name][0] is True:
+                title = repl(data[1], name, self.fmt.notification_title['on'])
+                message = repl(data[1], name, self.fmt.notification_cont['on'])
+                self.log(data[1], name, self.fmt.log_fmt['on'])
 
-                    try:
-                        show_notification(title, message)
-                    except RuntimeError:
-                        print('Failed to show notification!',
-                              file=sys.stderr)
-                        print(name + ' is offline')
+                try:
+                    show_notification(title, message)
+                except RuntimeError:
+                    print('Failed to show notification!',
+                          file=sys.stderr)
+                    print(name + ' is online')
+
+            elif old[name][0] is True and not data[0] is True:
+                title = repl(data[1], name, self.fmt.notification_title['off'])
+                message = repl(data[1], name, self.fmt.notification_cont['off'])
+                self.log(data[1], name, self.fmt.log_fmt['off'])
+
+                try:
+                    show_notification(title, message)
+                except RuntimeError:
+                    print('Failed to show notification!',
+                          file=sys.stderr)
+                    print(name + ' is offline')
 
         Notify.uninit()
 
