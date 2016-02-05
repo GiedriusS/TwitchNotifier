@@ -74,18 +74,22 @@ if __name__ == '__main__':
     NEW = API.get_status()
 
     if ARGS.online:
+        EXIT_CODE = 1
         for name, data in NEW.items():
             if data[0]:
+                EXIT_CODE = 0
                 print(library.repl(data[1], name, API.fmt.list_entry['on']))
         del API
-        sys.exit()
+        sys.exit(EXIT_CODE)
 
     if ARGS.offline:
+        EXIT_CODE = 1
         for name, data in NEW.items():
             if not data[0]:
+                EXIT_CODE = 0
                 print(library.repl(data[1], name, API.fmt.list_entry['off']))
         del API
-        sys.exit()
+        sys.exit(EXIT_CODE)
 
     OLD = None
 
