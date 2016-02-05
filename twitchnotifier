@@ -2,12 +2,12 @@
 '''
 The module that does everything according to what the user wants
 '''
-import library
 import argparse
 import time
 import sys
 import signal
 import os
+import library
 
 
 def cb_sighup(signum, frame):
@@ -74,16 +74,16 @@ if __name__ == '__main__':
     NEW = API.get_status()
 
     if ARGS.online:
-        for k, v in NEW.items():
-            if v[0]:
-                print(library.repl(v[1], k, API.fmt.list_entry['on']))
+        for name, data in NEW.items():
+            if data[0]:
+                print(library.repl(data[1], name, API.fmt.list_entry['on']))
         del API
         sys.exit()
 
     if ARGS.offline:
-        for k, v in NEW.items():
-            if not v[0]:
-                print(library.repl(v[1], k, API.fmt.list_entry['off']))
+        for name, data in NEW.items():
+            if not data[0]:
+                print(library.repl(data[1], name, API.fmt.list_entry['off']))
         del API
         sys.exit()
 
