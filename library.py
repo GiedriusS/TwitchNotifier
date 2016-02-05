@@ -319,7 +319,7 @@ class NotifyApi(object):
                 try:
                     show_notification(title, message)
                 except RuntimeError:
-                    print('Failed to show notification!',
+                    print('Failed to show a notification:',
                           file=sys.stderr)
                     print(name + ' is online')
 
@@ -331,7 +331,7 @@ class NotifyApi(object):
                 try:
                     show_notification(title, message)
                 except RuntimeError:
-                    print('Failed to show notification!',
+                    print('Failed to show a notification:',
                           file=sys.stderr)
                     print(name + ' is offline')
 
