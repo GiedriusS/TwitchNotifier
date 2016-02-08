@@ -304,7 +304,6 @@ class NotifyApi(object):
         new - newer dictionary returned from get_status()
         old - older dictionary returned from get_status()
         '''
-        Notify.init('TwitchNotifier')
         for name, data in new.items():
             if name not in old:
                 continue
