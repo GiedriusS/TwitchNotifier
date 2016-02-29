@@ -75,7 +75,6 @@ class Settings(object):
         try:
             self.conf.read(self.cfg)
         except configparser.MissingSectionHeaderError:
-            print(self.cfg + ' contains no section headers!', file=sys.stderr)
             return
 
         if SECTION not in self.conf:
