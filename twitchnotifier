@@ -71,11 +71,11 @@ if __name__ == '__main__':
         del API
         sys.exit(EXIT_CODE)
 
-    NEW = API.get_status()
+    ST = API.get_status()
 
     if ARGS.online:
         EXIT_CODE = 1
-        for name, data in NEW.items():
+        for name, data in ST.items():
             if data[0]:
                 EXIT_CODE = 0
                 print(library.repl(data[1], name, API.fmt.list_entry['on']))
@@ -84,19 +84,16 @@ if __name__ == '__main__':
 
     if ARGS.offline:
         EXIT_CODE = 1
-        for name, data in NEW.items():
+        for name, data in ST.items():
             if not data[0]:
                 EXIT_CODE = 0
                 print(library.repl(data[1], name, API.fmt.list_entry['off']))
         del API
         sys.exit(EXIT_CODE)
 
-    OLD = None
+    # Public the initial statuses
+    API.diff(ST)
 
     while True:
-        if OLD and NEW:
-            API.diff(NEW, OLD)
-
         time.sleep(ARGS.interval)
-        OLD = NEW
-        NEW = API.get_status()
+        API.diff(API.get_status())

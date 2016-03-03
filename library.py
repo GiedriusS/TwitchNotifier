@@ -116,6 +116,7 @@ class NotifyApi(object):
     nick = ''
     verbose = False
     fhand = None
+    statuses = {}
 
     def __init__(self, nick, fmt, logfile, verbose=False):
         '''
@@ -295,21 +296,26 @@ class NotifyApi(object):
 
         return ret
 
-    def diff(self, new, old):
+    def diff(self, new):
         '''
-        Computes diff between two dictionaries returned from get_status() and notifies
+        Check if there is a difference between statuses in `new' and the
+        dictionary inside the class and if there is then notify the user about
+        the change
 
         Positional arguments:
-        new - newer dictionary returned from get_status()
-        old - older dictionary returned from get_status()
+        new - dictionary returned from get_status()
         '''
         for name, data in new.items():
-            if name not in old:
+            ison = data[0]
+            if ison is None:
                 continue
-            if data[0] == old[name][0]:
+            if name not in self.statuses:
+                self.statuses[name] = ison
+                continue
+            if ison == self.statuses[name]:
                 continue
 
-            if data[0] is True and not old[name][0] is True:
+            if ison is True and not self.statuses[name] is True:
                 title = repl(data[1], name, self.fmt.notification_title['on'])
                 message = repl(data[1], name, self.fmt.notification_cont['on'])
                 self.log(data[1], name, self.fmt.log_fmt['on'])
@@ -321,7 +327,7 @@ class NotifyApi(object):
                           file=sys.stderr)
                     print(name + ' is online')
 
-            elif old[name][0] is True and not data[0] is True:
+            elif self.statuses[name] is True and not ison is True:
                 title = repl(data[1], name, self.fmt.notification_title['off'])
                 message = repl(data[1], name, self.fmt.notification_cont['off'])
                 self.log(data[1], name, self.fmt.log_fmt['off'])
@@ -332,6 +338,8 @@ class NotifyApi(object):
                     print('Failed to show a notification:',
                           file=sys.stderr)
                     print(name + ' is offline')
+
+            self.statuses[name] = ison
 
         Notify.uninit()
 
