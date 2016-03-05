@@ -276,6 +276,9 @@ class NotifyApi(object):
 
             offset = offset + LIMIT
 
+        if len(followed_chans) == 0:
+            return ret
+
         cmd = '/streams'
         offset = 0
         while True:
