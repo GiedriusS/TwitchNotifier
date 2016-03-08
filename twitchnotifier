@@ -7,7 +7,7 @@ import time
 import sys
 import signal
 import os
-import library
+import TN_library
 
 
 def cb_sighup(signum, frame):

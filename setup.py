@@ -11,5 +11,5 @@ setup(name='TwitchNotifier',
       author_email='giedrius.statkevicius@gmail.com',
       url='https://github.com/GiedriusS/TwitchNotifier',
       scripts=['twitchnotifier'],
-      py_modules=['library'],
+      py_modules=['TN_library'],
      )
