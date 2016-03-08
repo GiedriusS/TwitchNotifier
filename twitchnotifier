@@ -91,7 +91,7 @@ if __name__ == '__main__':
         del API
         sys.exit(EXIT_CODE)
 
-    # Public the initial statuses
+    # Parse the initial statuses
     API.diff(ST)
 
     while True:
