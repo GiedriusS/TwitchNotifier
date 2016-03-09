@@ -7,7 +7,7 @@ import time
 import sys
 import signal
 import os
-import TN_library
+import libtn
 
 
 def cb_sighup(signum, frame):
@@ -56,8 +56,8 @@ if __name__ == '__main__':
     if ARGS.verbose:
         print('Configuration file:', CONFIG_FILE)
 
-    FMT = TN_library.Settings(CONFIG_FILE)
-    API = TN_library.NotifyApi(ARGS.nick, FMT, ARGS.logfile, ARGS.verbose)
+    FMT = libtn.Settings(CONFIG_FILE)
+    API = libtn.NotifyApi(ARGS.nick, FMT, ARGS.logfile, ARGS.verbose)
     signal.signal(signal.SIGHUP, cb_sighup)
 
     if ARGS.user:
@@ -78,7 +78,7 @@ if __name__ == '__main__':
         for name, data in ST.items():
             if data[0]:
                 EXIT_CODE = 0
-                print(TN_library.repl(data[1], name, API.fmt.list_entry['on']))
+                print(libtn.repl(data[1], name, API.fmt.list_entry['on']))
         del API
         sys.exit(EXIT_CODE)
 
@@ -87,7 +87,7 @@ if __name__ == '__main__':
         for name, data in ST.items():
             if not data[0]:
                 EXIT_CODE = 0
-                print(TN_library.repl(data[1], name, API.fmt.list_entry['off']))
+                print(libtn.repl(data[1], name, API.fmt.list_entry['off']))
         del API
         sys.exit(EXIT_CODE)
 
