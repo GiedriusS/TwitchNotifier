@@ -1,7 +1,7 @@
 # TwitchNotifier
 A simple python application that sits in the background and notifies you when some channel you follow comes up online or goes offline.
 
-Optionally it can only check for offline/online channels once and exit using options -n/--online or -f/--offline. Also, if you pass -u/--user USER(,USER) then TwitchNotifier will only check the status of USER(,USER) and exit. Atleast -c/--nick or -u/--user has to be passed. If both are then -u/--user takes precendence. 
+Optionally it can only check for offline/online channels once and exit using options -n/--online or -f/--offline. Also, if you pass -u/--user USER(,USER) then TwitchNotifier will only check the status of USER(,USER) and exit. Atleast -c/--nick or -u/--user has to be passed. If both are then -u/--user takes precedence. 
 
 Uses twitch v3 api.
 
