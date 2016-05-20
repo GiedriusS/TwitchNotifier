@@ -1,5 +1,5 @@
 '''
-TwitchTV and config reading abstractions for TN
+TwitchTV, Notify and config reading abstractions for TwitchNotifier
 '''
 import configparser
 import time
@@ -21,7 +21,8 @@ SECTION = 'messages'
 
 class Settings(object):
     '''
-    A simple wrapper around configparser to read configuration
+    Saves the user configuration and can parse it from files or environment
+    variables.
     '''
     cfg = ''
 
@@ -33,10 +34,15 @@ class Settings(object):
 
     def __init__(self, cfg):
         '''
-        Initialize the object and read the file to get the info
+        Initialize the object and parse cfg and environment variables to get the
+        configuration
 
         Positional arguments:
         cfg - full path to the configuration file
+
+        Raises:
+        TypeError - cfg is not a string
+        ValueError - cfg is empty
         '''
         if not isinstance(cfg, str):
             raise TypeError('Wrong type passed to Settings')
@@ -50,7 +56,7 @@ class Settings(object):
 
     def environment(self):
         '''
-        Read environment variables into the settings
+        Parse user settings from the environment variables
         '''
         self.user_message['on'] = os.getenv('user_message', self.user_message['on'])
         self.user_message['off'] = os.getenv('user_message_off',
@@ -70,7 +76,7 @@ class Settings(object):
 
     def read_file(self):
         '''
-        Read the file and get needed sections/info
+        Read self.cfg and parse user configuration from that file
         '''
         try:
             self.conf.read(self.cfg)
@@ -111,7 +117,7 @@ class Settings(object):
 
 class NotifyApi(object):
     '''
-    Represents all twitch and libnotify/gobject calls the program needs
+    A wrapper around calls to the TTV API
     '''
     nick = ''
     verbose = False
@@ -120,12 +126,16 @@ class NotifyApi(object):
 
     def __init__(self, nick, fmt, logfile, verbose=False):
         '''
-        Initialize the object with a nick and verbose option
+        Initialize the API with various options
 
         Positional arguments:
         nick - nickname of the user
         fmt - a Settings object
+        logfile - location of the log file
         verbose - if we should be verbose in output
+
+        Raises:
+        TypeError - arguments with wrong types were passed to NotifyApi
         '''
         if not isinstance(nick, str) or not isinstance(verbose, bool):
             raise TypeError('Invalid variable type passed to NotifyApi')
@@ -141,7 +151,8 @@ class NotifyApi(object):
         Get a list of channels the user is following
 
         Positional arguments:
-        payload - dictionary converted to args passed in a GET request
+        payload - a dict that will be converted to args which will be passed in
+        a GET request
 
         Raises:
         NameError - when the current nickname is invalid
@@ -179,7 +190,7 @@ class NotifyApi(object):
 
         Positional arguments:
         cmd - command such as '/streams'
-        payload - arguments to send over the request
+        payload - dict of arguments to send with the request
 
         Returns:
         None - error occured
@@ -219,7 +230,7 @@ class NotifyApi(object):
 
     def check_if_online(self, chan):
         '''
-        Gets a dictionary of tuples in format of (status, formatted_msg)
+        Check the online status of channels in a list and get formatted messages
 
         Positional arguments:
         chan - list of channel names
@@ -258,7 +269,9 @@ class NotifyApi(object):
 
     def get_status(self):
         '''
-        Get a dictionary in format of {'name': (True/False/None, stream_obj), ...}
+        Get a list of dictionaries in format of {'name': (True/False/None,
+        stream_obj)} of self.nick followed channels
+
         True = channel is online, False = channel is offline, None = error
         '''
         followed_chans = []
@@ -363,7 +376,7 @@ class NotifyApi(object):
 
 def repl(stream, chan, msg):
     '''
-    Returns msg with replaced stuff from stream
+    Format msg according to the stream object
     Note that only $1 and $2 will be replaced if stream is offline
 
     Keys:
