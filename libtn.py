@@ -444,15 +444,3 @@ def show_notification(title, message):
 
     if not notif.show():
         raise RuntimeError('Failed to show a notification')
-
-if __name__ == '__main__':
-    ST = Settings('/home/giedrius/.config/twitchnotifier.cfg')
-
-    CORE = NotifyApi('Xangold', ST, '/home/giedrius/log', False)
-    LIST_OF_CHANS = CORE.get_followed_channels()
-    print(LIST_OF_CHANS, len(LIST_OF_CHANS))
-    STAT = CORE.get_status()
-    print(CORE.check_if_online('nadeshot'))
-    print(STAT)
-    show_notification('Hello', 'From TwitchNotifier')
-    Notify.uninit()
