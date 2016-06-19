@@ -312,6 +312,32 @@ class NotifyApi(object):
 
         return ret
 
+    def inform_user(self, online, data, name):
+        '''
+        Actually inform the user about the change in status.
+
+        Positional arguments:
+        online - is the user `name' online now or not
+        data - information about the user from self.get_status()
+        name - actual name of the user we are talking about
+        '''
+        if online is True:
+            title = repl(data[1], name, self.fmt.notification_title['on'])
+            message = repl(data[1], name, self.fmt.notification_cont['on'])
+            self.log(data[1], name, self.fmt.log_fmt['on'])
+        else:
+            title = repl(data[1], name, self.fmt.notification_title['off'])
+            message = repl(data[1], name, self.fmt.notification_cont['off'])
+            self.log(data[1], name, self.fmt.log_fmt['off'])
+
+        try:
+            show_notification(title, message)
+        except RuntimeError:
+            print('Failed to show a notification:',
+                  file=sys.stderr)
+            print('Title: ' + title, file=sys.stderr)
+            print('Message: ' + message, file=sys.stderr)
+
     def diff(self, new):
         '''
         Check if there is a difference between statuses in `new' and the
@@ -332,28 +358,9 @@ class NotifyApi(object):
                 continue
 
             if ison is True and not self.statuses[name] is True:
-                title = repl(data[1], name, self.fmt.notification_title['on'])
-                message = repl(data[1], name, self.fmt.notification_cont['on'])
-                self.log(data[1], name, self.fmt.log_fmt['on'])
-
-                try:
-                    show_notification(title, message)
-                except RuntimeError:
-                    print('Failed to show a notification:',
-                          file=sys.stderr)
-                    print(name + ' is online')
-
+                self.inform_user(True, data, name)
             elif self.statuses[name] is True and not ison is True:
-                title = repl(data[1], name, self.fmt.notification_title['off'])
-                message = repl(data[1], name, self.fmt.notification_cont['off'])
-                self.log(data[1], name, self.fmt.log_fmt['off'])
-
-                try:
-                    show_notification(title, message)
-                except RuntimeError:
-                    print('Failed to show a notification:',
-                          file=sys.stderr)
-                    print(name + ' is offline')
+                self.inform_user(False, data, name)
 
             self.statuses[name] = ison
 
