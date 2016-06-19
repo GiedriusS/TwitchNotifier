@@ -30,5 +30,54 @@ class LibTest(unittest.TestCase):
         api = libtn.NotifyApi(acc, settings, None, False)
         self.assertEqual(api.check_if_online([acc])[acc][0], False)
 
+    def test_diff(self):
+        api = libtn.NotifyApi('test_account123321', None, None, False)
+        output = {}
+        def assign_output(online, _, name):
+            output[name] = online
+        api.inform_user = assign_output
+
+        # off -> on
+        example = {'abc': (False, {})}
+        api.diff(example)
+        example = {'abc': (True, {})}
+        api.diff(example)
+        self.assertEqual(output['abc'], True)
+
+        # on -> off
+        example = {'abc': (False, {})}
+        api.diff(example)
+        self.assertEqual(output['abc'], False)
+
+        # off -> error
+        example = {'abc': (None, {})}
+        api.diff(example)
+        self.assertEqual(output['abc'], False)
+
+        # error -> on
+        example = {'abc': (True, {})}
+        api.diff(example)
+        self.assertEqual(output['abc'], True)
+
+        # on -> error
+        example = {'abc': (None, {})}
+        api.diff(example)
+        self.assertEqual(output['abc'], True)
+
+        # error -> off
+        example = {'abc': (False, {})}
+        api.diff(example)
+        self.assertEqual(output['abc'], False)
+
+        # off -> error
+        example = {'abc': (None, {})}
+        api.diff(example)
+        self.assertEqual(output['abc'], False)
+
+        # error -> error
+        example = {'abc': (None, {})}
+        api.diff(example)
+        self.assertEqual(output['abc'], False)
+
 if __name__ == '__main__':
     unittest.main()
