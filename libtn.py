@@ -417,7 +417,7 @@ def repl(stream, chan, msg):
                                                               ''))
         ret = ret.replace('$6', stream.get('channel', {}).get('language',
                                                               ''))
-        ret = ret.replace('$7', str(stream.get('average_fps')))
+        ret = ret.replace('$7', str(stream.get('average_fps', '')))
         ret = ret.replace('$8', str(stream.get('channel',
                                                {}).get('followers', '')))
         ret = ret.replace('$9', str(stream.get('channel', {}).get('views',
