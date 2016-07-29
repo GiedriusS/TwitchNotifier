@@ -79,5 +79,24 @@ class LibTest(unittest.TestCase):
         api.diff(example)
         self.assertEqual(output['abc'], False)
 
+    def test_repl(self):
+        chan = 'foo'
+        ret = libtn.repl(None, chan, '$1 $2')
+        self.assertEqual(ret, chan + ' offline')
+        ret = libtn.repl(None, chan, '$3$4$5$6$7$8$9')
+        self.assertEqual(ret, '$3$4$5$6$7$8$9')
+        ret = libtn.repl(None, chan, '${}')
+        self.assertNotEqual(ret, '${}')
+        ret = libtn.repl(None, chan, '$%3$@4$^5$&6$(7$&8$+9')
+        self.assertEqual(ret, '$%3$@4$^5$&6$(7$&8$+9')
+        stream = {'foo': 'bar'}
+        ret = libtn.repl(stream, chan, '$1 $2')
+        self.assertEqual(ret, chan + ' online')
+        ret = libtn.repl(stream, chan, '$3$4$5$6$7$8$9')
+        self.assertEqual(ret, '')
+        stream = {'game': 'test', 'viewers': 123, 'average_fps': 24.2}
+        ret = libtn.repl(stream, chan, '$3$4$7')
+        self.assertEqual(ret, 'test' + '123' + '24.2')
+
 if __name__ == '__main__':
     unittest.main()
