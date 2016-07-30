@@ -75,6 +75,7 @@ if __name__ == '__main__':
         ST = API.get_status()
     except NameError:
         print(ARGS.nick + ' is an invalid nickname!', file=sys.stderr)
+        del API
         sys.exit(1)
 
     if ARGS.online:
