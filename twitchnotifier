@@ -71,7 +71,11 @@ if __name__ == '__main__':
         del API
         sys.exit(EXIT_CODE)
 
-    ST = API.get_status()
+    try:
+        ST = API.get_status()
+    except NameError:
+        print(ARGS.nick + ' is an invalid nickname!', file=sys.stderr)
+        sys.exit(1)
 
     if ARGS.online:
         EXIT_CODE = 1
