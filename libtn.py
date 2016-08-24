@@ -238,6 +238,7 @@ class NotifyApi(object):
         Returns a dictionary of tuples of format (status, formatted_msg)
         '''
         ret = {}
+        i = 0
 
         if len(chan) == 0:
             if self.verbose:
@@ -245,11 +246,10 @@ class NotifyApi(object):
                       file=sys.stderr)
             return ret
 
-        offset = 0
         cont = True
         while cont:
-            payload = {'channel': ','.join(chan), 'limit': LIMIT,
-                       'offset': offset}
+            payload = {'channel': ','.join(chan[i*LIMIT:(i+1)*LIMIT]), 'limit': LIMIT,
+                       'offset': 0}
             resp = self.access_kraken('/streams', payload)
             if resp is None or 'streams' not in resp:
                 break
@@ -258,8 +258,8 @@ class NotifyApi(object):
                 name = stream['channel']['name']
                 ret[name] = (True, repl(stream, name, self.fmt.user_message['on']))
 
-            offset = offset + LIMIT
-            cont = len(resp['streams']) > 0
+            i += 1
+            cont = i*LIMIT < len(chan)
 
         for name in chan:
             if name not in ret:
