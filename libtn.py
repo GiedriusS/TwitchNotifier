@@ -277,6 +277,7 @@ class NotifyApi(object):
         followed_chans = []
         ret = {}
         offset = 0
+        i = 0
 
         while True:
             fol = self.get_followed_channels({'offset': offset,
@@ -293,18 +294,17 @@ class NotifyApi(object):
             return ret
 
         cmd = '/streams'
-        offset = 0
         while True:
-            payload = {'channel': ','.join(name for name in followed_chans),
-                       'offset': offset, 'limit': LIMIT}
+            payload = {'channel': ','.join(followed_chans[i*LIMIT:(i+1)*LIMIT]),
+                       'offset': 0, 'limit': LIMIT}
             json = self.access_kraken(cmd, payload)
             if json and 'streams' in json:
                 for stream in json['streams']:
                     ret[stream['channel']['name']] = (True, stream)
 
-            if not json or (json and 'streams' in json and len(json['streams']) == 0):
+            i += 1
+            if i*LIMIT > len(followed_chans):
                 break
-            offset = offset + LIMIT
 
         for name in followed_chans:
             if name not in ret:
