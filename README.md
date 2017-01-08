@@ -1,5 +1,5 @@
 # Demo
-![Demo image](http://raw.githubusercontent.com/GiedriusS/TwitchNotifier/master/demo.png "Demo showing the example output of TwitchNotifier")
+![Demo image](https://github.com/GiedriusS/TwitchNotifier/raw/master/demo.png "Demo showing the example output of TwitchNotifier")
 
 # TwitchNotifier
 A simple python application that sits in the background and notifies you when some followed channel goes online or offline.
