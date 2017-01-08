@@ -1,12 +1,13 @@
-# Demo
-![Demo image](https://github.com/GiedriusS/TwitchNotifier/raw/master/demo.png "Demo showing the example output of TwitchNotifier")
-
 # TwitchNotifier
 A simple python application that sits in the background and notifies you when some followed channel goes online or offline.
 
 Also, it can only check for offline/online channels once and exit using options -n/--online or -f/--offline. Furthermore, if you pass -u/--user USER(,USER) then TwitchNotifier will only check the status of USER(,USER) and exit. Atleast -c/--nick or -u/--user has to be passed. If both are then -u/--user takes precedence.
 
 Uses the third version of Twitch API.
+
+# Demo
+![Demo image](https://github.com/GiedriusS/TwitchNotifier/raw/master/demo.png "Demo showing the example output of TwitchNotifier")
+
 
 # Message configuration
 It is possible to configure the message format of TwitchNotifier. Create a file called "twitchnotifier.cfg" in $XDG\_CONFIG\_HOME (or $HOME/.config, or /.config). Also, you could manually set the configuration file location with -g/--config. Or if you hate configuration files then you can manipulate the format via environment variables. The environment variable names are the same as the key names in the configuration file.
