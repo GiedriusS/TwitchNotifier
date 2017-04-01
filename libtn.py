@@ -41,11 +41,8 @@ class Settings(object):
         cfg - full path to the configuration file
 
         Raises:
-        TypeError - cfg is not a string
         ValueError - cfg is empty
         '''
-        if not isinstance(cfg, str):
-            raise TypeError('Wrong type passed to Settings')
         if not cfg.strip():
             raise ValueError('Empty string passed to Settings')
 
@@ -133,13 +130,7 @@ class NotifyApi(object):
         fmt - a Settings object
         logfile - location of the log file
         verbose - if we should be verbose in output
-
-        Raises:
-        TypeError - arguments with wrong types were passed to NotifyApi
         '''
-        if not isinstance(nick, str) or not isinstance(verbose, bool):
-            raise TypeError('Invalid variable type passed to NotifyApi')
-
         self.nick = nick
         self.verbose = verbose
         self.fmt = fmt
@@ -410,7 +401,7 @@ def repl(stream, chan, msg):
     ret = ret.replace('$1', chan)
     ret = re.sub(r'\$\{(.*)\}', lambda x: time.strftime(x.group(1)), ret)
 
-    if stream and isinstance(stream, dict):
+    if stream is not None:
         ret = ret.replace('$3', str(stream.get('game', '')))
         ret = ret.replace('$4', str(stream.get('viewers', '')))
         ret = ret.replace('$5', stream.get('channel', {}).get('status',
