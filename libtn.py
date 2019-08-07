@@ -13,7 +13,7 @@ from gi.repository import Notify
 
 BASE_URL = 'https://api.twitch.tv/kraken'
 CLIENT_ID = 'pvv7ytxj4v7i10h0p3s7ewf4vpoz5fc'
-HEAD = {'Accept': 'application/vnd.twitch.v3+json',
+HEAD = {'Accept': 'application/vnd.twitch.v5+json',
         'Client-ID': CLIENT_ID}
 LIMIT = 100
 SECTION = 'messages'
@@ -116,7 +116,7 @@ class NotifyApi(object):
     '''
     A wrapper around calls to the TTV API
     '''
-    nick = ''
+    userid = ''
     verbose = False
     fhand = None
     statuses = {}
@@ -131,7 +131,7 @@ class NotifyApi(object):
         logfile - location of the log file
         verbose - if we should be verbose in output
         '''
-        self.nick = nick
+        self.userid = self.get_userid(nick)
         self.verbose = verbose
         self.fmt = fmt
         if logfile is not None:
@@ -146,12 +146,12 @@ class NotifyApi(object):
         a GET request
 
         Raises:
-        NameError - when the current nickname is invalid
+        NameError - when the current user id is invalid
 
         Returns a list of channels that user follows
         '''
         ret = []
-        cmd = '/users/' + self.nick + '/follows/channels'
+        cmd = '/users/' + self.userid + '/follows/channels'
 
         if payload is None:
             payload = {}
@@ -161,7 +161,7 @@ class NotifyApi(object):
             return ret
 
         if 'status' in json and json['status'] == 404:
-            raise NameError(self.nick + ' is a invalid nickname!')
+            raise NameError(self.userid + ' is a invalid userid!')
 
         if 'follows' in json:
             for chan in json['follows']:
@@ -174,6 +174,15 @@ class NotifyApi(object):
         Notify.uninit()
         if self.fhand is not None:
             self.fhand.close()
+
+    def get_userid(self, nick):
+        '''
+        Gets userid of the specified nick
+        '''
+        ret = self.access_kraken('/users?login=' + nick)
+        if ret['_total'] < 1:
+            raise NameError(nick + ' is a invalid nick!')
+        return ret['users'][0][_id]
 
     def access_kraken(self, cmd, payload=None):
         '''
@@ -261,7 +270,7 @@ class NotifyApi(object):
     def get_status(self):
         '''
         Get a list of dictionaries in format of {'name': (True/False/None,
-        stream_obj)} of self.nick followed channels
+        stream_obj)} of self.userid followed channels
 
         True = channel is online, False = channel is offline, None = error
         '''
