@@ -130,7 +130,7 @@ class NotifyApi(object):
         logfile - location of the log file
         verbose - if we should be verbose in output
         '''
-        self.userid = self.get_userid(nick)
+        self.my_userid = '' if nick == '' else self.get_userid(nick.lower())
         self.verbose = verbose
         self.fmt = fmt
         if logfile is not None:
@@ -150,7 +150,7 @@ class NotifyApi(object):
         Returns a list of channels that user follows
         '''
         ret = []
-        cmd = '/users/' + self.userid + '/follows/channels'
+        cmd = '/users/' + self.my_userid + '/follows/channels'
 
         if payload is None:
             payload = {}
@@ -160,11 +160,11 @@ class NotifyApi(object):
             return ret
 
         if 'status' in json and json['status'] == 404:
-            raise NameError(self.userid + ' is a invalid userid!')
+            raise NameError(f'{self.my_userid} is a invalid userid!')
 
         if 'follows' in json:
             for chan in json['follows']:
-                ret.append(chan['channel']['name'])
+                ret.append(chan['channel']['name'].lower())
 
         return ret
 
@@ -174,14 +174,26 @@ class NotifyApi(object):
         if self.fhand is not None:
             self.fhand.close()
 
+    def get_userids(self, nicks):
+        '''
+        Gets the userids of the specified nicks
+        '''
+        ret = self.access_kraken('/users', {'login': ','.join(n.lower() for n
+                                                              in nicks)})
+        if ret is None or '_total' not in ret or ret['_total'] != len(nicks):
+            raise NameError(f'{nicks} has invalid nicknames')
+
+        ids = []
+        for user in ret['users']:
+            ids.append(user['_id'])
+        return ids
+
     def get_userid(self, nick):
         '''
         Gets userid of the specified nick
         '''
-        ret = self.access_kraken('/users', {'login': nick})
-        if ret is None or '_total' not in ret or ret['_total'] < 1:
-            raise NameError(nick + ' is a invalid nick!')
-        return ret['users'][0]['_id']
+        ret = self.get_userids([nick])
+        return ret[0]
 
     def access_kraken(self, cmd, payload=None):
         '''
@@ -216,7 +228,7 @@ class NotifyApi(object):
             print('-'*20, file=sys.stderr)
 
         if req.status_code == requests.codes.bad:
-            print('Kraken request returned bad code, bailing', file=sys.stderr)
+            print(f'Kraken request returned bad code {req.status_code}, bailing', file=sys.stderr)
             return None
 
         try:
@@ -229,7 +241,8 @@ class NotifyApi(object):
 
     def check_if_online(self, chan):
         '''
-        Check the online status of channels in a list and get formatted messages
+        Check the online status of channels in a list and get formatted
+        messages
 
         Positional arguments:
         chan - list of channel names
@@ -239,7 +252,7 @@ class NotifyApi(object):
         ret = {}
         i = 0
 
-        if len(chan) == 0:
+        if chan == []:
             if self.verbose:
                 print('channel passed to check_if_online is empty',
                       file=sys.stderr)
@@ -247,29 +260,34 @@ class NotifyApi(object):
 
         cont = True
         while cont:
-            payload = {'channel': ','.join(chan[i*LIMIT:(i+1)*LIMIT]), 'limit': LIMIT,
+            chans = chan[i*LIMIT:(i+1)*LIMIT]
+            chan_ids = self.get_userids(chans)
+            payload = {'channel': ','.join(chan_ids), 'limit': LIMIT,
                        'offset': 0}
             resp = self.access_kraken('/streams', payload)
             if resp is None or 'streams' not in resp:
                 break
 
             for stream in resp['streams']:
-                name = stream['channel']['name']
-                ret[name] = (True, repl(stream, name, self.fmt.user_message['on']))
+                name = stream['channel']['name'].lower()
+                ret[name] = (True, repl(stream, name,
+                                        self.fmt.user_message['on']))
 
             i += 1
             cont = i*LIMIT < len(chan)
 
         for name in chan:
             if name not in ret:
-                ret[name] = (False, repl(None, name, self.fmt.user_message['off']))
+                name = name.lower()
+                ret[name] = (False, repl(None, name,
+                                         self.fmt.user_message['off']))
 
         return ret
 
     def get_status(self):
         '''
         Get a list of dictionaries in format of {'name': (True/False/None,
-        stream_obj)} of self.userid followed channels
+        stream_obj)} of self.my_userid followed channels
 
         True = channel is online, False = channel is offline, None = error
         '''
@@ -284,22 +302,25 @@ class NotifyApi(object):
             for chan in fol:
                 followed_chans.append(chan)
 
-            if len(fol) == 0:
+            if fol == []:
                 break
 
             offset = offset + LIMIT
 
-        if len(followed_chans) == 0:
+        if followed_chans == []:
             return ret
 
         cmd = '/streams'
         while True:
-            payload = {'channel': ','.join(followed_chans[i*LIMIT:(i+1)*LIMIT]),
-                       'offset': 0, 'limit': LIMIT}
+            payload = {
+                'channel': ','.join(followed_chans[i*LIMIT:(i+1)*LIMIT]),
+                'offset': 0, 'limit': LIMIT
+            }
             json = self.access_kraken(cmd, payload)
             if json and 'streams' in json:
                 for stream in json['streams']:
-                    ret[stream['channel']['name']] = (True, stream)
+                    name = stream['channel']['name'].lower()
+                    ret[name] = (True, stream)
 
             i += 1
             if i*LIMIT > len(followed_chans):
@@ -307,6 +328,7 @@ class NotifyApi(object):
 
         for name in followed_chans:
             if name not in ret:
+                name = name.lower()
                 ret[name] = (False, None)
 
         return ret
@@ -320,6 +342,7 @@ class NotifyApi(object):
         data - information about the user from self.get_status()
         name - actual name of the user we are talking about
         '''
+        name = name.lower()
         if online is True:
             title = repl(data[1], name, self.fmt.notification_title['on'])
             message = repl(data[1], name, self.fmt.notification_cont['on'])
@@ -358,7 +381,7 @@ class NotifyApi(object):
 
             if ison is True and not self.statuses[name] is True:
                 self.inform_user(True, data, name)
-            elif self.statuses[name] is True and not ison is True:
+            elif self.statuses[name] is True and ison is not True:
                 self.inform_user(False, data, name)
 
             self.statuses[name] = ison
