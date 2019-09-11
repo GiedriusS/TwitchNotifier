@@ -3,22 +3,28 @@ import libtn
 
 class LibTest(unittest.TestCase):
     def test_get_followed_channels(self):
-        api = libtn.NotifyApi('test_account123321', None, None, False)
+        api = libtn.NotifyApi('test_account123322', None, None, False)
+
         list_of_chans = api.get_followed_channels({'offset': 0, 'limit': 1})
-        self.assertEqual(list_of_chans[0], 'xangold')
         self.assertEqual(len(list_of_chans), 1)
+        self.assertEqual(list_of_chans[0], 'xangold')
+
         list_of_chans = api.get_followed_channels({'offset': 1, 'limit': 1})
         self.assertEqual(len(list_of_chans), 0)
+
         list_of_chans = api.get_followed_channels({'offset': 0, 'limit': 100})
         self.assertEqual(list_of_chans[0], 'xangold')
         self.assertEqual(len(list_of_chans), 1)
+
         list_of_chans = api.get_followed_channels({'offset': 1, 'limit': 100})
         self.assertEqual(len(list_of_chans), 0)
+
         api = libtn.NotifyApi('test_account5555666', None, None, False)
         list_of_chans = api.get_followed_channels({'offset': 0, 'limit': 1})
         self.assertEqual(len(list_of_chans), 0)
         list_of_chans = api.get_followed_channels({'offset': 1, 'limit': 1})
         self.assertEqual(len(list_of_chans), 0)
+
         api = libtn.NotifyApi('metasigma', None, None, False)
         list_of_chans = api.get_followed_channels({'offset': 0, 'limit': 100})
         list_of_chans2 = api.get_followed_channels({'offset': 100, 'limit': 100})
