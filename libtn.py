@@ -312,8 +312,11 @@ class NotifyApi(object):
 
         cmd = '/streams'
         while True:
+            chans = followed_chans[i*LIMIT:(i+1)*LIMIT]
+            chan_ids = self.get_userids(chans)
+
             payload = {
-                'channel': ','.join(followed_chans[i*LIMIT:(i+1)*LIMIT]),
+                'channel': ','.join(chan_ids),
                 'offset': 0, 'limit': LIMIT
             }
             json = self.access_kraken(cmd, payload)

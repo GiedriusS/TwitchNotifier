@@ -56,15 +56,12 @@ if __name__ == '__main__':
     if ARGS.verbose:
         print('Configuration file:', CONFIG_FILE)
 
-    ARGS.nick = ARGS.nick.lower()
-    ARGS.user = ARGS.user.lower()
-
     FMT = libtn.Settings(CONFIG_FILE)
     API = libtn.NotifyApi(ARGS.nick, FMT, ARGS.logfile, ARGS.verbose)
     signal.signal(signal.SIGHUP, cb_sighup)
 
     if ARGS.user:
-        LST = ARGS.user.split(',')
+        LST = ARGS.user.lower().split(',')
         RET = API.check_if_online(LST)
         EXIT_CODE = 1
         for name, data in RET.items():
