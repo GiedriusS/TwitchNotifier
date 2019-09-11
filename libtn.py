@@ -13,7 +13,7 @@ from gi.repository import Notify
 
 BASE_URL = 'https://api.twitch.tv/kraken'
 CLIENT_ID = 'pvv7ytxj4v7i10h0p3s7ewf4vpoz5fc'
-HEAD = {'Accept': 'application/vnd.twitch.v5+json',
+HEAD = {'Accept': 'application/vnd.twitchtv.v5+json',
         'Client-ID': CLIENT_ID}
 LIMIT = 100
 SECTION = 'messages'
@@ -81,8 +81,7 @@ class Settings(object):
             return
 
         if SECTION not in self.conf:
-            print('Missing section "' + SECTION + '" in ' + self.cfg,
-                  file=sys.stderr)
+            print(f'Missing section {SECTION} in {self.cfg}', file=sys.stderr)
             return
 
         opt = self.conf[SECTION]
@@ -179,10 +178,10 @@ class NotifyApi(object):
         '''
         Gets userid of the specified nick
         '''
-        ret = self.access_kraken('/users?login=' + nick)
-        if ret['_total'] < 1:
+        ret = self.access_kraken('/users', {'login': nick})
+        if ret is None or '_total' not in ret or ret['_total'] < 1:
             raise NameError(nick + ' is a invalid nick!')
-        return ret['users'][0][_id]
+        return ret['users'][0]['_id']
 
     def access_kraken(self, cmd, payload=None):
         '''
@@ -210,7 +209,7 @@ class NotifyApi(object):
 
         if self.verbose:
             print('-'*20, file=sys.stderr)
-            print('cmd: ' + cmd, 'payload: ' + str(payload), file=sys.stderr, sep='\n')
+            print(f'cmd: {cmd}, payload: {payload}', file=sys.stderr, sep='\n')
             print('req.text: ' + req.text, 'req.status_code: ' +
                   str(req.status_code), 'req.headers: ' + str(req.headers),
                   file=sys.stderr, sep='\n')
