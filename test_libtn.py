@@ -5,29 +5,93 @@ class LibTest(unittest.TestCase):
     def test_get_followed_channels(self):
         api = libtn.NotifyApi('test_account123322', None, None, False)
 
-        list_of_chans = api.get_followed_channels({'offset': 0, 'limit': 1})
+        list_of_chans = api.get_followed_channels({'offset': 0,
+                                                   'limit': 1,
+                                                   # Workaround for
+                                                   # https://github.com/twitchdev/issues/issues/237.
+                                                   # Doesn't really matter in our
+                                                   # case. Without this, `offset'
+                                                   # does not work.
+                                                   'sortby': 'last_broadcast'
+                                                  })
         self.assertEqual(len(list_of_chans), 1)
-        self.assertEqual(list_of_chans[0], 'xangold')
+        self.assertEqual(list_of_chans[0], 'grossie_gore')
 
-        list_of_chans = api.get_followed_channels({'offset': 1, 'limit': 1})
+        list_of_chans = api.get_followed_channels({'offset': 1,
+                                                   'limit': 1,
+                                                   # Workaround for
+                                                   # https://github.com/twitchdev/issues/issues/237.
+                                                   # Doesn't really matter in our
+                                                   # case. Without this, `offset'
+                                                   # does not work.
+                                                   'sortby': 'last_broadcast'
+                                                  })
         self.assertEqual(len(list_of_chans), 0)
 
-        list_of_chans = api.get_followed_channels({'offset': 0, 'limit': 100})
-        self.assertEqual(list_of_chans[0], 'xangold')
+        list_of_chans = api.get_followed_channels({'offset': 0,
+                                                   'limit': 100,
+                                                   # Workaround for
+                                                   # https://github.com/twitchdev/issues/issues/237.
+                                                   # Doesn't really matter in our
+                                                   # case. Without this, `offset'
+                                                   # does not work.
+                                                   'sortby': 'last_broadcast'
+                                                  })
+        self.assertEqual(list_of_chans[0], 'grossie_gore')
         self.assertEqual(len(list_of_chans), 1)
 
-        list_of_chans = api.get_followed_channels({'offset': 1, 'limit': 100})
+        list_of_chans = api.get_followed_channels({'offset': 1,
+                                                   'limit': 100,
+                                                   # Workaround for
+                                                   # https://github.com/twitchdev/issues/issues/237.
+                                                   # Doesn't really matter in our
+                                                   # case. Without this, `offset'
+                                                   # does not work.
+                                                   'sortby': 'last_broadcast'
+                                                  })
         self.assertEqual(len(list_of_chans), 0)
 
         api = libtn.NotifyApi('test_account5555666', None, None, False)
-        list_of_chans = api.get_followed_channels({'offset': 0, 'limit': 1})
+        list_of_chans = api.get_followed_channels({'offset': 0,
+                                                   'limit': 1,
+                                                   # Workaround for
+                                                   # https://github.com/twitchdev/issues/issues/237.
+                                                   # Doesn't really matter in our
+                                                   # case. Without this, `offset'
+                                                   # does not work.
+                                                   'sortby': 'last_broadcast'
+                                                  })
         self.assertEqual(len(list_of_chans), 0)
-        list_of_chans = api.get_followed_channels({'offset': 1, 'limit': 1})
+        list_of_chans = api.get_followed_channels({'offset': 1,
+                                                   'limit': 1,
+                                                   # Workaround for
+                                                   # https://github.com/twitchdev/issues/issues/237.
+                                                   # Doesn't really matter in our
+                                                   # case. Without this, `offset'
+                                                   # does not work.
+                                                   'sortby': 'last_broadcast'
+                                                  })
         self.assertEqual(len(list_of_chans), 0)
 
         api = libtn.NotifyApi('metasigma', None, None, False)
-        list_of_chans = api.get_followed_channels({'offset': 0, 'limit': 100})
-        list_of_chans2 = api.get_followed_channels({'offset': 100, 'limit': 100})
+        list_of_chans = api.get_followed_channels({'offset': 0,
+                                                   'limit': 100,
+                                                   # Workaround for
+                                                   # https://github.com/twitchdev/issues/issues/237.
+                                                   # Doesn't really matter in our
+                                                   # case. Without this, `offset'
+                                                   # does not work.
+                                                   'sortby': 'last_broadcast'
+                                                  })
+        list_of_chans2 = api.get_followed_channels({'offset': 100,
+                                                    'limit': 100,
+                                                    # Workaround for
+                                                    # https://github.com/twitchdev/issues/issues/237.
+                                                    # Doesn't really matter in our
+                                                    # case. Without this, `offset'
+                                                    # does not work.
+                                                    'sortby': 'last_broadcast'
+                                                   })
         self.assertEqual(len(list_of_chans)+len(list_of_chans2) > 100, True)
 
     def test_check_if_online(self):

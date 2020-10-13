@@ -298,7 +298,12 @@ class NotifyApi(object):
 
         while True:
             fol = self.get_followed_channels({'offset': offset,
-                                              'limit': LIMIT})
+                                              'limit': LIMIT,
+                                              # Workaround for
+                                              # https://github.com/twitchdev/issues/issues/237.
+                                              # Doesn't really matter in our
+                                              # case.
+                                              'sortby': 'last_broadcast'})
             for chan in fol:
                 followed_chans.append(chan)
 
