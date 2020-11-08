@@ -2,6 +2,7 @@
 TwitchTV, Notify and config reading abstractions for TwitchNotifier
 '''
 import configparser
+import distutils.util
 import time
 import re
 import sys
@@ -9,7 +10,7 @@ import os
 import requests
 import gi
 gi.require_version('Notify', '0.7')
-from gi.repository import Notify
+from gi.repository import Notify, GdkPixbuf
 
 BASE_URL = 'https://api.twitch.tv/kraken'
 CLIENT_ID = 'pvv7ytxj4v7i10h0p3s7ewf4vpoz5fc'
@@ -31,6 +32,7 @@ class Settings(object):
     notification_cont = {'on': 'is $2', 'off': 'is $2'}
     list_entry = {'on': '$1', 'off': '$1'}
     log_fmt = {'on': '(${%d %H:%M:%S}) $1 is $2', 'off': '(${%d %H:%M:%S}) $1 is $2'}
+    show_picture = False
 
     def __init__(self, cfg):
         '''
@@ -70,6 +72,10 @@ class Settings(object):
         self.list_entry['off'] = os.getenv('list_entry_off', self.list_entry['off'])
         self.log_fmt['on'] = os.getenv('log_fmt', self.log_fmt['on'])
         self.log_fmt['off'] = os.getenv('log_fmt_off', self.log_fmt['off'])
+        self.show_picture = bool(distutils.util.strtobool(
+                                                          os.getenv('show_picture',
+                                                          str(self.show_picture))
+                                                         ))
 
     def read_file(self):
         '''
@@ -109,6 +115,7 @@ class Settings(object):
         self.log_fmt['on'] = opt.get('log_fmt', self.log_fmt['on'], raw=True)
         self.log_fmt['off'] = opt.get('log_fmt_off', self.log_fmt['off'],
                                       raw=True)
+        self.show_picture = opt.getboolean('show_picture', self.show_picture)
 
 
 class NotifyApi(object):
@@ -120,19 +127,19 @@ class NotifyApi(object):
     fhand = None
     statuses = {}
 
-    def __init__(self, nick, fmt, logfile, verbose=False):
+    def __init__(self, nick, settings, logfile, verbose=False):
         '''
         Initialize the API with various options
 
         Positional arguments:
         nick - nickname of the user
-        fmt - a Settings object
+        settings - a Settings object
         logfile - location of the log file
         verbose - if we should be verbose in output
         '''
         self.my_userid = '' if nick == '' else self.get_userid(nick.lower())
         self.verbose = verbose
-        self.fmt = fmt
+        self.settings = settings
         if logfile is not None:
             self.fhand = open(logfile, 'a')
 
@@ -271,7 +278,7 @@ class NotifyApi(object):
             for stream in resp['streams']:
                 name = stream['channel']['name'].lower()
                 ret[name] = (True, repl(stream, name,
-                                        self.fmt.user_message['on']))
+                                        self.settings.user_message['on']))
 
             i += 1
             cont = i*LIMIT < len(chan)
@@ -280,7 +287,7 @@ class NotifyApi(object):
             if name not in ret:
                 name = name.lower()
                 ret[name] = (False, repl(None, name,
-                                         self.fmt.user_message['off']))
+                                         self.settings.user_message['off']))
 
         return ret
 
@@ -352,16 +359,19 @@ class NotifyApi(object):
         '''
         name = name.lower()
         if online is True:
-            title = repl(data[1], name, self.fmt.notification_title['on'])
-            message = repl(data[1], name, self.fmt.notification_cont['on'])
-            self.log(data[1], name, self.fmt.log_fmt['on'])
+            title = repl(data[1], name, self.settings.notification_title['on'])
+            message = repl(data[1], name, self.settings.notification_cont['on'])
+            self.log(data[1], name, self.settings.log_fmt['on'])
         else:
-            title = repl(data[1], name, self.fmt.notification_title['off'])
-            message = repl(data[1], name, self.fmt.notification_cont['off'])
-            self.log(data[1], name, self.fmt.log_fmt['off'])
+            title = repl(data[1], name, self.settings.notification_title['off'])
+            message = repl(data[1], name, self.settings.notification_cont['off'])
+            self.log(data[1], name, self.settings.log_fmt['off'])
 
         try:
-            show_notification(title, message)
+            if self.settings.show_picture is True and data[1] is not None:
+                show_notification(title, message, data[1].get('channel', {}).get('logo'))
+            else:
+                show_notification(title, message, None)
         except RuntimeError:
             print('Failed to show a notification:',
                   file=sys.stderr)
@@ -456,13 +466,14 @@ def repl(stream, chan, msg):
     return ret
 
 
-def show_notification(title, message):
+def show_notification(title, message, url_picture):
     '''
     Show a notification using libnotify/gobject
 
     Positional arguments:
     title - notification title
     message - notification message
+    url_picture - optional URL to where we could find the user's picture
 
     Raises:
     RuntimeError - failed to show the notification
@@ -479,5 +490,23 @@ def show_notification(title, message):
 
     notif = Notify.Notification.new(title, message)
 
+    # TODO(GiedriusS): make this parallel; add a cache.
+    if url_picture is not None and url_picture != "":
+        try:
+            loader = GdkPixbuf.PixbufLoader.new()
+            response = requests.get(url_picture, timeout=5)
+            response.raise_for_status()
+            loader.write(response.content)
+            loader.close()
+            notif.set_icon_from_pixbuf(loader.get_pixbuf())
+        except requests.exceptions.HTTPError as err:
+            print(f'Got {err} while trying to download {url_picture}; trying to show without a picture',
+                  file=sys.stderr)
+            pass
+        except requests.exceptions.Timeout:
+            print(f'Timed out while trying to download {url_picture}; trying to show without a picture',
+                  file=sys.stderr)
+            pass
+
     if not notif.show():
-        raise RuntimeError('Failed to show a notification')
+        raise RuntimeError('failed to show a notification')
